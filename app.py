@@ -4,7 +4,6 @@ import pandas as pd
 import io
 import datetime
 from datetime import datetime as dt
-import plotly.express as px
 from datetime import date
 import re
 import unicodedata
