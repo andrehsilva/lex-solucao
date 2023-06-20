@@ -99,13 +99,14 @@ if check_password():
     choice = st.sidebar.selectbox('Selecione:',page)
 
 
+    with open('template_simulador.xlsx', "rb") as template_file:
+        template_byte = template_file.read()
 
-    st.sidebar.download_button(
-        label="Template do simulador",
-        data='template_simulador.xlsx',
-        file_name='template_simulador.xlsx',
-        mime='text/csv',
-    )
+        st.sidebar.download_button(label="Download arquivo template",
+                            data=template_byte,
+                            file_name="template_simulador.xlsx",
+                            mime='application/octet-stream')
+
 
 
     if choice == 'B2B':
