@@ -92,7 +92,7 @@ if check_password():
     
     # sidebar
     st.sidebar.image('https://sso.lex.education/assets/images/new-lex-logo.png', width=100)
-    st.sidebar.title('Script de licenças - Simulador')
+    st.sidebar.title('Script de solução - Simulador')
 
 
     page = ['B2B','B2C']
