@@ -39,7 +39,6 @@ def check_password():
         return True
 
 
-
 if check_password():
 
     buffer = io.BytesIO()
