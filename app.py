@@ -67,7 +67,7 @@ if check_password():
     df_lex = df_lex.sort_values(by=['Licenças'], ascending=False)
     #configurações do streamlit
 
-    st.set_page_config(page_title="Script de licenças",page_icon="🧊",layout="wide",initial_sidebar_state="expanded")
+    st.set_page_config(page_title="Script de soluções",page_icon="⭐",layout="wide",initial_sidebar_state="expanded")
 
     # funcoes
     def maiuscula(data):
