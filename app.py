@@ -9,6 +9,7 @@ import re
 import unicodedata
 import time
 import base64
+#### codigo
 
 def check_password():
     """Returns `True` if the user had the correct password."""
