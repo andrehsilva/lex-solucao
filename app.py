@@ -95,7 +95,7 @@ if check_password():
     st.sidebar.title('Script de solução - Simulador')
 
 
-    page = ['B2B','B2C']
+    page = ['B2B','B2C', 'B2C_2']
     choice = st.sidebar.selectbox('Selecione:',page)
 
 
@@ -506,8 +506,9 @@ if check_password():
     if choice == "B2C":
         
         st.info('Módulo B2C em construção :)')
-            
-        
+
+    if choice == "B2C_2":
+            st.info('Módulo B2C em construção :)')
                     
 
 
