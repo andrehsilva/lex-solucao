@@ -504,13 +504,12 @@ if check_password():
 
 
     if choice == "B2C":
-        
         st.info('Módulo B2C em construção :)')
 
 
 
     if choice == "B2B2C":
-            st.info('Módulo B2C em construção :)')
+        st.info('Módulo B2C em construção :)')
                     
 
 
