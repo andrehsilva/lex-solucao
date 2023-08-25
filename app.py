@@ -11,6 +11,7 @@ import time
 import base64
 import openpyxl
 #### codigo
+!pip install openpyxl
 
 def check_password():
     """Returns `True` if the user had the correct password."""
