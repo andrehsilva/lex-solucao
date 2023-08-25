@@ -1,4 +1,3 @@
-pip install openpyxl
 from typing import Text
 import streamlit as st
 import pandas as pd
