@@ -2,8 +2,4 @@ streamlit==1.24.1
 pandas>2.0
 numpy<=1.25.1
 xlsxwriter==3.1.3
-<<<<<<< HEAD
-openpyxl==3.1.2
-=======
 openpyxl
->>>>>>> f2c97f696293337db1b6d791bf9172823175d328
