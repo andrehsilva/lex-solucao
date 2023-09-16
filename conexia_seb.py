@@ -190,6 +190,7 @@ def seb():
         solucao = pd.merge(solucao,categoria, on=['Série'], how='inner')
         solucao['Categorias'] = solucao['Marca'] + '/' + solucao['Categorias']
         solucao = solucao.sort_values(by=['Bimestre','Série'], ascending=True)
+        
 
         solucao = solucao.rename(columns={'Público':'grupo_de_atributo','Marca':'marca_produto', 'Nome':'nome', 'SKU':'sku', 'Ano':'ano_produto', 'Série':'serie_produto', 'Bimestre':'utilizacao_produto', 'Categorias':'categorias', '2024+':'items', 'Customer Group':'grupos_permissao'})
         #solucao['items'] = solucao['items'].apply(lambda x: x[:-1])
