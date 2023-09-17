@@ -265,14 +265,15 @@ if check_password():
             pdt['CNPJ_off'] = [h.sub('', x) for x in pdt['CNPJ']]
             pdt['CNPJ_off'] = [x.lstrip('0') for x in pdt['CNPJ_off']]
             pdt['CNPJ_off'] = pdt['CNPJ_off'].astype(float)
-            #pdt.to_excel(f'{output}/pdt_da_escola2.xlsx')
 
             cod_nome = pd.read_excel(planilha, sheet_name='nome')
             cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
             pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
-            #regra
-            pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('ANUAL')))]
 
+            ################regra
+            pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('ANUAL')))]
+            ###################
+            
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
             pdt['SKU'] = pdt['Escola'] + pdt['Marca'] + pdt['Serial']
             pdt['SKU'] = pdt['SKU'].str.replace(' ','')
