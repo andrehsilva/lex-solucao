@@ -536,7 +536,7 @@ if check_password():
         today = date.today().strftime('%d-%m-%Y')
         cliente_tipo = 'B2B'
 
-        st.info("Simulador - SEB")
+        st.info("Simulador - PREMIUM/UNIQUE")
 
         #  29.271.264/0001-61
         cliente = st.text_input('Digite o CNPJ da escola:')
