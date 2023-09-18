@@ -11,6 +11,7 @@ import re
 import unicodedata
 import xlsxwriter
 import openpyxl
+from streamlit_modal import Modal
 
 
 
@@ -68,7 +69,32 @@ if check_password():
     page = ['CONEXIA B2B','CONEXIA B2C','SEB','PREMIUM/UNIQUE']
     choice = st.sidebar.selectbox('Selecione:',page)
         
-    
+
+    with open('conexia.xlsm', "rb") as template_file:
+        template_byte = template_file.read()
+
+        st.sidebar.download_button(label="Download template Conexia",
+                            data=template_byte,
+                            file_name="conexia.xlsm",
+                            mime='application/octet-stream')
+
+
+    with open('seb.xlsm', "rb") as template_file:
+        template_byte = template_file.read()
+
+        st.sidebar.download_button(label="Download template SEB",
+                            data=template_byte,
+                            file_name="seb.xlsm",
+                            mime='application/octet-stream')
+        
+        
+    with open('premium.xlsm', "rb") as template_file:
+        template_byte = template_file.read()
+
+        st.sidebar.download_button(label="Download template Premium",
+                            data=template_byte,
+                            file_name="premium.xlsm",
+                            mime='application/octet-stream')
 
     ##########B2B################
 
