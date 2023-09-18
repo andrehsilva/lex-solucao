@@ -11,7 +11,6 @@ import re
 import unicodedata
 import xlsxwriter
 import openpyxl
-from streamlit_modal import Modal
 
 
 
@@ -87,7 +86,7 @@ if check_password():
                             file_name="seb.xlsm",
                             mime='application/octet-stream')
         
-        
+
     with open('premium.xlsm', "rb") as template_file:
         template_byte = template_file.read()
 
