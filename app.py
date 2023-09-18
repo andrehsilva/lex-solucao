@@ -304,7 +304,7 @@ if check_password():
 
 
 
-    if choice == "B2C":
+    if choice == "CONEXIA B2C":
         st.info('Módulo B2C em construção :)')
 
 
