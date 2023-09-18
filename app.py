@@ -67,34 +67,41 @@ if check_password():
 
     page = ['CONEXIA B2B','CONEXIA B2C','SEB','PREMIUM/UNIQUE']
     choice = st.sidebar.selectbox('Selecione:',page)
+     
+
+    
         
 
-    with open('conexia.xlsm', "rb") as template_file:
-        template_byte = template_file.read()
+    
+        
+    if st.sidebar.button('Downloads de templates'):
 
-        st.sidebar.download_button(label="Download template Conexia",
+        with open('conexia.xlsm', "rb") as template_file:
+            template_byte = template_file.read()
+
+            st.download_button(label="Download template Conexia",
                             data=template_byte,
                             file_name="conexia.xlsm",
                             mime='application/octet-stream')
 
 
-    with open('seb.xlsm', "rb") as template_file:
-        template_byte = template_file.read()
+        with open('seb.xlsm', "rb") as template_file:
+            template_byte = template_file.read()
 
-        st.sidebar.download_button(label="Download template SEB",
+            st.download_button(label="Download template SEB",
                             data=template_byte,
                             file_name="seb.xlsm",
                             mime='application/octet-stream')
-        
 
-    with open('premium.xlsm', "rb") as template_file:
-        template_byte = template_file.read()
+        with open('premium.xlsm', "rb") as template_file:
+            template_byte = template_file.read()
 
-        st.sidebar.download_button(label="Download template Premium",
-                            data=template_byte,
-                            file_name="premium.xlsm",
-                            mime='application/octet-stream')
-
+            st.download_button(label="Download template Premium",
+                                data=template_byte,
+                                file_name="premium.xlsm",
+                                mime='application/octet-stream')
+    
+    
     ##########B2B################
 
 
@@ -115,8 +122,8 @@ if check_password():
         
         if file is not None:
            # Lê o arquivo Excel
-            #simul0 = pd.read_excel(file, sheet_name='cálculos Anual')
-            #simul0=simul0.assign(Bimestre="ANUAL")
+            simul0 = pd.read_excel(file, sheet_name='cálculos Anual')
+            simul0=simul0.assign(Bimestre="ANUAL")
             simul1 = pd.read_excel(file, sheet_name='cálculos 1º Bim')
             simul1=simul1.assign(Bimestre="1º BIMESTRE")
             simul2 = pd.read_excel(file, sheet_name='cálculos 2º Bim')
@@ -127,8 +134,8 @@ if check_password():
             simul4=simul4.assign(Bimestre="4º BIMESTRE")
             
             #alterar regra conforme leitura das planilhas
-            #simul = pd.concat([simul0,simul1,simul2,simul3,simul4])
-            simul = pd.concat([simul1,simul2,simul3,simul4])
+            simul = pd.concat([simul0,simul1,simul2,simul3,simul4])
+            #simul = pd.concat([simul1,simul2,simul3,simul4])
 
             simul = simul.rename(columns={'Construindo a Alfabetização':'Alfabetização','Itinerários Formativos Micro cursos     (2 IF)':'Itinerários','H5 - (3 Horas) Language Book + CLIL e PBL ':'H5 - 3 Horas','H5 - (2 horas)\nInternational Journey + \nApp H5':'H5 - 2 horas Journey','H5 Plus\n (3 horas extras)':'H5 Plus','My Life\n(Base)':'My Life - Base','My Life\n(2024)':'My Life - 2024','Binoculo By Tell Me\n(Base)':'Binoculo - Base','Educacross Ed. Infantil\n(Base)':'Educacross Infantil - Base','Educacross\n(Base)':'Educacross - Base','Educacross AZ\n(Base)':'Educacross AZ - Base','Educacross H5\n(Base)':'Educacross H5 - Base','Ubbu\n(Base)':'Ubbu - Base','Binoculo By Tell Me\n(2024)':'Binoculo - 2024','Educacross Ed. Infantil\n(2024)':'Educacross Infantil - 2024','Educacross\n(2024)':'Educacross - 2024','Educacross AZ\n(2024)':'Educacross AZ - 2024','Educacross H5\n(2024)':'Educacross H5 - 2024','Ubbu\n(2024)':'Ubbu - 2024','Árvore\n(1 Módulo)':'Árvore 1 Módulo','Árvore\n(2 Módulos)':'Árvore 2 Módulos','Árvore\n(3 Módulos)':'Árvore 3 Módulos','total aluno/ano\nsem desconto':'total aluno sem desconto','total aluno/ano\ncom desconto sem complementar':'total aluno com desconto sem complementar','total aluno/ano\ncom desconto + Complementares':'total aluno com desconto com Complementares',})
 
