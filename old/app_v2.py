@@ -11,7 +11,6 @@ import re
 import unicodedata
 import xlsxwriter
 import openpyxl
-import os
 from check import check_password
 
 if check_password():
@@ -183,13 +182,10 @@ if check_password():
            cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
            pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
 
-           ######regra para tirar anual da marca Conexi
-
-           if (pdt['Descrição Magento'].str.contains('KIT').any()):
-               pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('ANUAL')))]
-               pdt = pdt[~((pdt['Marca'] == 'AZ') & (pdt['Bimestre'].str.contains('ANUAL')))]
-               pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','AZ')
-               #pdt
+           ####regra para tirar anual da marca Conexia
+           #pdt = pdt['Marca'].where((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('ANUAL')))
+           #pdt = pdt[~((pdt['Marca'].str.contains('HIGH|LIFE')) & (pdt['Bimestre'].str.contains('ANUAL')))]
+           pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('ANUAL')))]
 
            pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
            pdt['SKU'] = pdt['Escola'] + pdt['Marca'] + pdt['Serial']
@@ -201,11 +197,8 @@ if check_password():
            solucao = operacoes.copy()
            operacao = operacoes.copy()
            operacao = operacao[['Escola','CNPJ','Ano','Marca','Serial','Segmento','Série','Bimestre','Público','SKU','Nome','Cód Itens','Descrição Magento','Quantidade de alunos','% Desconto Volume','% Desconto Extra','% Desconto Total','Customer Group','Squad']]
-           #operacao.to_excel('operacao.xlsx')
+           operacao.to_excel('operacao.xlsx')
            operacao = operacao.sort_values(by=['Série','Bimestre'])
-
-           
-               
 
            solucao = solucao.groupby(['Escola','CNPJ','Série','Bimestre','Marca','Segmento','Ano','Público','Serial','SKU','Nome','Customer Group','Squad'])['2024+'].sum().reset_index()
            solucao['visibilidade'] = 'N'
