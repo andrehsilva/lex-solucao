@@ -183,13 +183,49 @@ if check_password():
            cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
            pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
 
-           ######regra para tirar anual da marca Conexi
-
+           ####################################################################################################
+           ######regra para tirar anual da marca Conexia#####################################################
            if (pdt['Descrição Magento'].str.contains('KIT').any()):
+           #if ((pdt['Descrição Magento'].str.contains('KIT').any()) or (pdt['Marca'].str.contains('AZ').any())):
                pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('ANUAL')))]
                pdt = pdt[~((pdt['Marca'] == 'AZ') & (pdt['Bimestre'].str.contains('ANUAL')))]
+               pdt = pdt[~((pdt['Marca'] == 'MY LIFE') & (pdt['Bimestre'].str.contains('ANUAL')))]
                pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','AZ')
+               pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','AZ')
+               ##caso deixar a solução AZ sem marca
+               #pdt['Marca'] = pdt['Marca'].str.replace('AZ','')
                #pdt
+               st.markdown('Marca principal: AZ')
+
+           elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
+               pdt = pdt[pdt['Bimestre'] == 'ANUAL']
+               pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','HIGH FIVE')
+               pdt['Marca'] = pdt['Marca'].str.replace('AZ','HIGH FIVE')
+               st.markdown('Marca principal: HIGH FIVE')
+               #pdt
+
+           elif (pdt['Marca'].str.contains('MY LIFE').any()):
+               pdt = pdt[pdt['Bimestre'] == 'ANUAL']
+               pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
+               st.markdown('Marca principal: MY LIFE')
+               #pdt
+           
+           ######### Regra H5
+           if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
+               pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+               #pdt
+
+           if (pdt['Produto'].str.contains('H5 Plus').any()):
+               pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+               pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
+               #pdt
+            ########################################################################################################
+           ###############################################################################################################  
+
+
+           with st.spinner('Aguarde...'):
+               time.sleep(2)
+
 
            pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
            pdt['SKU'] = pdt['Escola'] + pdt['Marca'] + pdt['Serial']
@@ -259,7 +295,8 @@ if check_password():
            df_brinde_final = df_brinde_final.sort_values(by=['Grupo do Cliente','Nome da Regra'])
            
            ######## Exibir na tela para conferência #####
-
+           escola = operacao['Escola'].unique()[0]
+           st.write(escola)
            operacao
 
            with st.spinner('Aguarde...'):
@@ -270,8 +307,9 @@ if check_password():
                # IMPORTANT: Cache the conversion to prevent computation on every rerun
                return df.to_csv(index=False).encode('UTF-8')
            
-           escola = pdt['Escola'][0]
-
+           
+           
+           
            col1, col2, col3 = st.columns(3)
            with col1:
                output = io.BytesIO()
