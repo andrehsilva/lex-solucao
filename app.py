@@ -357,6 +357,15 @@ if check_password():
                         mime='text/csv'
                     )
 
+            ###### DEBUG COM FILTRO
+            selected = st.selectbox('Selecione a série:', ['',*pdt['Série'].unique()])
+            if selected:
+                selected_serie = pdt[pdt['Série'] == selected]
+                selected_serie
+            else:
+                pdt
+            ##################
+
 
 
 
@@ -548,30 +557,27 @@ if check_password():
                 pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
                 st.markdown('Marca principal: MY LIFE')
 
-           
-
-            
-            
-            
             
              #################### Regra H5 #######################################################
             
-            #if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
-            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
-            #    #pdt
-#
-            #if (pdt['Produto'].str.contains('H5 Plus').any()):
-            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
-            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
-            #    #pdt
+            if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
+                pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+                #pdt
+
+            if (pdt['Produto'].str.contains('H5 Plus').any()):
+                pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+                pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
+
+                #pdt
+            #pdt_full = pdt[~(pdt['Marca'] == 'HIGH FIVE')]
+            #pdt_high = pdt[pdt['Marca'] == 'HIGH FIVE']
+            #if (pdt['Marca'] == 'HIGH FIVE').any():
+            #    for i in pdt_high['Série'].unique():
+            #        if
             
 
 
-            ###### DEBUG COM FILTRO
-            selected_serie = st.selectbox('Selecione a série:', pdt['Série'].unique())
-            filtered_df = pdt[pdt['Série'] == selected_serie]
-            filtered_df
-            ##################
+            
 
             
             ########################################################################################################
@@ -603,7 +609,7 @@ if check_password():
             solucao['ativar_restricao'] = 'S'
             #solucao.to_csv('teste_solução.csv')
 
-            categoria = pd.read_excel(planilha, sheet_name='categoriab2b')
+            categoria = pd.read_excel(planilha, sheet_name='categoriab2c')
             solucao = pd.merge(solucao,categoria, on=['Série'], how='inner')
             solucao['Categorias'] = solucao['Marca'] + '/' + solucao['Categorias']
             solucao = solucao.sort_values(by=['Bimestre','Série'], ascending=True)
@@ -693,3 +699,12 @@ if check_password():
                         file_name=f'{today}-{escola}-brinde.csv',
                         mime='text/csv'
                     )
+            
+            ###### DEBUG COM FILTRO
+            selected = st.selectbox('Selecione a série:', ['',*pdt['Série'].unique()])
+            if selected:
+                selected_serie = pdt[pdt['Série'] == selected]
+                selected_serie
+            else:
+                pdt
+            ##################
