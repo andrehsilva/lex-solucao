@@ -364,6 +364,7 @@ if check_password():
 
     if choice == 'CONEXIA B2C':
         marca = 'AZ B2C'
+        sheetname = 'itens'
         planilha = 'itens.xlsx'
         today = date.today().strftime('%d-%m-%Y')
         cliente_tipo = 'B2C'
@@ -418,16 +419,7 @@ if check_password():
                 simul['% Desconto Total'] = simul['% Desconto Extra%'] + simul['% Desconto Volume']
                 simul = simul.rename(columns={'% Desconto Extra%':'% Desconto Extra'})
             
-            simul = simul.rename(columns={'Construindo a Alfabetização':'Alfabetização','Itinerários Formativos Micro cursos     (2 IF)':'Itinerários',
-                                          'H5 - (3 Horas) Language Book + CLIL e PBL ':'H5 - 3 Horas','H5 - (2 horas)\nInternational Journey + \nApp H5':'H5 - 2 horas Journey',
-                                          'H5 Plus\n (3 horas extras)':'H5 Plus','My Life\n(Base)':'My Life - Base','My Life\n(2024)':'My Life - 2024',
-                                          'Binoculo By Tell Me\n(Base)':'Binoculo - Base','Educacross Ed. Infantil\n(Base)':'Educacross Infantil - Base',
-                                          'Educacross\n(Base)':'Educacross - Base','Educacross AZ\n(Base)':'Educacross AZ - Base','Educacross H5\n(Base)':'Educacross H5 - Base',
-                                          'Ubbu\n(Base)':'Ubbu - Base','Binoculo By Tell Me\n(2024)':'Binoculo - 2024','Educacross Ed. Infantil\n(2024)':'Educacross Infantil - 2024',
-                                          'Educacross\n(2024)':'Educacross - 2024','Educacross AZ\n(2024)':'Educacross AZ - 2024','Educacross H5\n(2024)':'Educacross H5 - 2024',
-                                          'Ubbu\n(2024)':'Ubbu - 2024','Árvore\n(1 Módulo)':'Árvore 1 Módulo','Árvore\n(2 Módulos)':'Árvore 2 Módulos','Árvore\n(3 Módulos)':'Árvore 3 Módulos',
-                                          'total aluno/ano\nsem desconto':'total aluno sem desconto','total aluno/ano\ncom desconto sem complementar':'total aluno com desconto sem complementar',
-                                          'total aluno/ano\ncom desconto + Complementares':'total aluno com desconto com Complementares',})
+            simul = simul.rename(columns={'Construindo a Alfabetização':'Alfabetização','Itinerários Formativos Micro cursos     (2 IF)':'Itinerários','H5 - (3 Horas) Language Book + CLIL e PBL ':'H5 - 3 Horas','H5 - (2 horas)\nInternational Journey + \nApp H5':'H5 - 2 horas Journey','H5 Plus\n (3 horas extras)':'H5 Plus','My Life\n(Base)':'My Life - Base','My Life\n(2024)':'My Life - 2024','Binoculo By Tell Me\n(Base)':'Binoculo - Base','Educacross Ed. Infantil\n(Base)':'Educacross Infantil - Base','Educacross\n(Base)':'Educacross - Base','Educacross AZ\n(Base)':'Educacross AZ - Base','Educacross H5\n(Base)':'Educacross H5 - Base','Ubbu\n(Base)':'Ubbu - Base','Binoculo By Tell Me\n(2024)':'Binoculo - 2024','Educacross Ed. Infantil\n(2024)':'Educacross Infantil - 2024','Educacross\n(2024)':'Educacross - 2024','Educacross AZ\n(2024)':'Educacross AZ - 2024','Educacross H5\n(2024)':'Educacross H5 - 2024','Ubbu\n(2024)':'Ubbu - 2024','Árvore\n(1 Módulo)':'Árvore 1 Módulo','Árvore\n(2 Módulos)':'Árvore 2 Módulos','Árvore\n(3 Módulos)':'Árvore 3 Módulos','total aluno/ano\nsem desconto':'total aluno sem desconto','total aluno/ano\ncom desconto sem complementar':'total aluno com desconto sem complementar','total aluno/ano\ncom desconto + Complementares':'total aluno com desconto com Complementares',})
             
             simul = simul[['Série','Segmento','Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês','% Desconto Volume','Quantidade de alunos','Razão Social','CNPJ','Squad','Tipo','Grupo de cliente','Bimestre','% Desconto Total','Valor de venda (B2C)']]
             
@@ -469,6 +461,7 @@ if check_password():
             df_cliente['Scholastic Earlybird and Bookflix'] = df_cliente['Scholastic Earlybird and Bookflix'].where(df_cliente['Scholastic Earlybird and Bookflix'] == 0, 1)
             df_cliente['Scholastic Literacy Pro'] = df_cliente['Scholastic Literacy Pro'].where(df_cliente['Scholastic Literacy Pro'] == 0, 1)
             df_cliente['Livro de Inglês'] = df_cliente['Livro de Inglês'].where(df_cliente['Livro de Inglês'] == 0,1)
+
             
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Ed. Infantil','INFANTIL')
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Fund. Anos Iniciais','FUNDAMENTAL ANOS INICIAIS')
@@ -481,10 +474,7 @@ if check_password():
             df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
             ####
             df_client = df_cliente.copy()
-            lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM',
-                     '5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024',
-                     'Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024',
-                     'Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
+            lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
             
             #df_client.to_excel('cliente.xlsx')
          
@@ -502,16 +492,20 @@ if check_password():
             p = p.reset_index()
             p = p.drop(columns=['index'])
             
-            
-            itens = pd.read_excel(planilha, sheet_name='itens_b2c')
+            itens = pd.read_excel(planilha, sheet_name=sheetname)
             itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
             itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
-            itens = itens[(itens['Marca'] == marca) | (itens['Marca'] == 'CONEXIA') | (itens['Marca'] == 'MUNDO LEITOR') | (itens['Marca'] == 'MY LIFE')| (itens['Marca'] == 'HIGH FIVE')]
-        
+            itens = itens[(itens['Marca'] == marca) | (itens['Marca'] == 'AZ')| (itens['Marca'] == 'CONEXIA') | (itens['Marca'] == 'MUNDO LEITOR') | (itens['Marca'] == 'MY LIFE')| (itens['Marca'] == 'HIGH FIVE')]
+            
+            itens = itens[~((itens['Marca'] == 'AZ') & (itens['Produto'].str.contains('Plataforma AZ')))]
+            itens = itens[~((itens['Marca'] == 'AZ') & (itens['Produto'].str.contains('Material Impressos AZ')))]
           
 
-            pdt = pd.merge(p, itens, on=['Série','Bimestre','Segmento','Produto'], how='inner')
-        
+            pdt = pd.merge(p, itens, on=['Série','Segmento','Produto'], how='inner')
+            del(pdt['Bimestre_x'])
+            pdt = pdt.rename(columns={'Bimestre_y':'Bimestre'})
+
+
         
             cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
             pdt = pd.merge(pdt, cod_serial, on=['Série','Bimestre','Segmento','Público'], how='inner')
@@ -520,6 +514,10 @@ if check_password():
             pdt['Ano'] = '2024'
             pdt['SKU'] = pdt['Ano'] + pdt['Serial']
             pdt = pdt[['Série','Segmento','% Desconto Total','Valor de venda (B2C)','Quantidade de alunos','Razão Social','CNPJ','Bimestre','Squad','Tipo','Extra','Produto','Marca',2024,'2024+','Descrição Magento','Público','Faturamento','Serial','Categoria','Ano','SKU']]
+            
+            pdt = pdt.drop_duplicates()
+        
+            pdt
             
 
             h = re.compile(r'[../\-]')
@@ -530,50 +528,42 @@ if check_password():
             cod_nome = pd.read_excel(planilha, sheet_name='nome')
             cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
             pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
-             
+            
+            
+
+            
+            pdt = pdt.drop_duplicates()
 
             if (pdt['Marca'].str.contains('AZ B2C').any()):
+                pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('BIMESTRE')))]
+                pdt = pdt[~((pdt['Marca'] == 'AZ B2C') & (pdt['Bimestre'].str.contains('ANUAL')))]
+                pdt = pdt[~((pdt['Marca'] == 'AZ B2C') & (pdt['Valor de venda (B2C)'] == 0))]
                 pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','AZ B2C')
                 pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','AZ B2C')
+                ##caso deixar a solução AZ sem marca
+                #pdt['Marca'] = pdt['Marca'].str.replace('AZ','')
+                
                 st.markdown('Marca principal: AZ B2C')
 
             elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
                 pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','HIGH FIVE')
                 pdt['Marca'] = pdt['Marca'].str.replace('AZ B2C','HIGH FIVE')
-                pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','HIGH FIVE')
                 st.markdown('Marca principal: HIGH FIVE')
                 
 
             elif (pdt['Marca'].str.contains('MY LIFE').any()):
                 pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
                 st.markdown('Marca principal: MY LIFE')
+            
+            #################### Regra H5 #######################################################
+            if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
+                pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+                #pdt
 
-           
-
-            
-            
-            
-            
-             #################### Regra H5 #######################################################
-            
-            #if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
-            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
-            #    #pdt
-#
-            #if (pdt['Produto'].str.contains('H5 Plus').any()):
-            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
-            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
-            #    #pdt
-            
-
-
-            ###### DEBUG COM FILTRO
-            selected_serie = st.selectbox('Selecione a série:', pdt['Série'].unique())
-            filtered_df = pdt[pdt['Série'] == selected_serie]
-            filtered_df
-            ##################
-
-            
+            if (pdt['Produto'].str.contains('H5 Plus').any()):
+                pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+                pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
+                #pdt
             ########################################################################################################
             ###############################################################################################################  
 
