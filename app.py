@@ -97,6 +97,7 @@ if check_password():
             simul3 = pd.read_excel(file, sheet_name='cálculos 3º Bim')
             simul3=simul3.assign(Bimestre="3º BIMESTRE")
             simul3.replace(0, np.nan, inplace = True)
+            
 
             simul4 = pd.read_excel(file, sheet_name='cálculos 4º Bim')
             simul4=simul4.assign(Bimestre="4º BIMESTRE")
@@ -107,7 +108,7 @@ if check_password():
             
             #simul = pd.concat([simul1,simul2,simul3,simul4])
             simul = simul[simul['Quantidade de alunos']>0]
-            
+            #simul
             if agree:
                 desconto = pd.read_excel(file, sheet_name='Formulário Anual 2024')
                 desconto = desconto.iloc[:, :6] 
@@ -186,7 +187,7 @@ if check_password():
             lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
             
             #df_client.to_excel('cliente.xlsx')
-            
+            #df_client
 
             for item in lista:
                 df_client.loc[df_client[item] == 1.0, item] = item
@@ -201,7 +202,7 @@ if check_password():
             p = p.reset_index()
             p = p.drop(columns=['index'])
             p = p.drop_duplicates()
-            
+            #p
 
             itens = pd.read_excel(planilha, sheet_name=sheetname)
             itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
@@ -670,23 +671,23 @@ if check_password():
             solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
             
             
-            df_brinde = operacao[['CNPJ','SKU','Série','Bimestre','Descrição Magento','Cód Itens','Customer Group']]
-            df_brinde_input = pd.read_excel(planilha, sheet_name='brinde')
-            df_brinde = pd.merge(df_brinde,df_brinde_input, on=['Cód Itens'], how='inner')
-            df_brinde_final = df_brinde.copy()
-            df_brinde_final = df_brinde_final[['Série_x','Nome da Regra','Customer Group','SKU_x','SKU_y']]
-            df_brinde_final['Status'] = 'ATIVO'
-            df_brinde_infantil = df_brinde_final.loc[df_brinde_final['Série_x'].str.contains('Grupo')]
-            df_brinde_infantil['Qtd Incremento'] = 11
-            df_brinde_demais = df_brinde_final.loc[~df_brinde_final['Série_x'].str.contains('Grupo')]
-            df_brinde_demais['Qtd Incremento'] = 20
-            df_brinde_final = pd.concat([df_brinde_infantil,df_brinde_demais])
-            df_brinde_final['Qtd Condicao'] = 1
-            df_brinde_final = df_brinde_final.rename(columns={'Customer Group':'Grupo do Cliente','SKU_x':'Sku Condicao','SKU_y':'Sku Brinde'})
-            df_brinde_final = df_brinde_final[['Nome da Regra','Status','Grupo do Cliente','Sku Condicao','Qtd Condicao','Sku Brinde','Qtd Incremento']]
-            df_brinde_final = df_brinde_final.rename(columns= {'Nome da Regra':'nome_da_regra','Status':'status','Grupo do Cliente':'grupo_do_cliente',
-                                                               'Sku Condicao':'sku_condicao','Qtd Condicao':'qtd_condicao','Sku Brinde':'sku_brinde','Qtd Incremento':'qtd_incremento'})
-            df_brinde_final = df_brinde_final.sort_values(by=['grupo_do_cliente','nome_da_regra'])
+            #df_brinde = operacao[['CNPJ','SKU','Série','Bimestre','Descrição Magento','Cód Itens','Customer Group']]
+            #df_brinde_input = pd.read_excel(planilha, sheet_name='brinde')
+            #df_brinde = pd.merge(df_brinde,df_brinde_input, on=['Cód Itens'], how='inner')
+            #df_brinde_final = df_brinde.copy()
+            #df_brinde_final = df_brinde_final[['Série_x','Nome da Regra','Customer Group','SKU_x','SKU_y']]
+            #df_brinde_final['Status'] = 'ATIVO'
+            #df_brinde_infantil = df_brinde_final.loc[df_brinde_final['Série_x'].str.contains('Grupo')]
+            #df_brinde_infantil['Qtd Incremento'] = 11
+            #df_brinde_demais = df_brinde_final.loc[~df_brinde_final['Série_x'].str.contains('Grupo')]
+            #df_brinde_demais['Qtd Incremento'] = 20
+            #df_brinde_final = pd.concat([df_brinde_infantil,df_brinde_demais])
+            #df_brinde_final['Qtd Condicao'] = 1
+            #df_brinde_final = df_brinde_final.rename(columns={'Customer Group':'Grupo do Cliente','SKU_x':'Sku Condicao','SKU_y':'Sku Brinde'})
+            #df_brinde_final = df_brinde_final[['Nome da Regra','Status','Grupo do Cliente','Sku Condicao','Qtd Condicao','Sku Brinde','Qtd Incremento']]
+            #df_brinde_final = df_brinde_final.rename(columns= {'Nome da Regra':'nome_da_regra','Status':'status','Grupo do Cliente':'grupo_do_cliente',
+            #                                                   'Sku Condicao':'sku_condicao','Qtd Condicao':'qtd_condicao','Sku Brinde':'sku_brinde','Qtd Incremento':'qtd_incremento'})
+            #df_brinde_final = df_brinde_final.sort_values(by=['grupo_do_cliente','nome_da_regra'])
             #df_brinde_final['id'] = range(1, len(df_brinde_final) + 1)
             #df_brinde_final = [['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
 
@@ -730,14 +731,14 @@ if check_password():
                         mime='text/csv'
                     )
                     
-            with col3:
-                    df_brinde_final = convert_df(df_brinde_final)
-                    st.download_button(
-                    label="Download do brinde",
-                        data=df_brinde_final,
-                        file_name=f'{today}-{escola}-brinde.csv',
-                        mime='text/csv'
-                    )
+            #with col3:
+            #        df_brinde_final = convert_df(df_brinde_final)
+            #        st.download_button(
+            #        label="Download do brinde",
+            #            data=df_brinde_final,
+            #            file_name=f'{today}-{escola}-brinde.csv',
+            #            mime='text/csv'
+            #        )
             
             ###### DEBUG COM FILTRO
             st.divider()
