@@ -340,8 +340,8 @@ if check_password():
             df_brinde_final = df_brinde_final.rename(columns= {'Nome da Regra':'nome_da_regra','Status':'status','Grupo do Cliente':'grupo_do_cliente',
                                                                'Sku Condicao':'sku_condicao','Qtd Condicao':'qtd_condicao','Sku Brinde':'sku_brinde','Qtd Incremento':'qtd_incremento'})
             df_brinde_final = df_brinde_final.sort_values(by=['grupo_do_cliente','nome_da_regra'])
-            df_brinde_final['id'] = range(1, len(df_brinde_final) + 1)
-            df_brinde_final = [['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
+            #df_brinde_final['id'] = range(1, len(df_brinde_final) + 1)
+            #df_brinde_final = [['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
             
@@ -687,9 +687,9 @@ if check_password():
             df_brinde_final = df_brinde_final.rename(columns= {'Nome da Regra':'nome_da_regra','Status':'status','Grupo do Cliente':'grupo_do_cliente',
                                                                'Sku Condicao':'sku_condicao','Qtd Condicao':'qtd_condicao','Sku Brinde':'sku_brinde','Qtd Incremento':'qtd_incremento'})
             df_brinde_final = df_brinde_final.sort_values(by=['grupo_do_cliente','nome_da_regra'])
-            df_brinde_final['id'] = range(1, len(df_brinde_final) + 1)
-            df_brinde_final = [['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
-            
+            #df_brinde_final['id'] = range(1, len(df_brinde_final) + 1)
+            #df_brinde_final = [['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
+
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
         
