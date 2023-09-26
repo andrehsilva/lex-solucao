@@ -42,8 +42,7 @@ if check_password():
         cliente_tipo = 'B2B'
 
         st.info("Simulador - CONEXIA B2B")
-        agree = st.checkbox('Marque para usar o cálculo do script')
-        st.write("36.214.347/0001-84")
+        agree = st.checkbox('Marque para usar o cálculo do script - (Não recomendado!)')
         #  29.271.264/0001-61
         cliente = st.text_input('Digite o CNPJ da escola:')
         # Carrega o arquivo
@@ -199,7 +198,7 @@ if check_password():
             
             ####################################################################################################
             ######regra para tirar anual da marca Conexia#####################################################
-
+            
 
             if (pdt['Marca'].str.contains('AZ').any()):
             #if ((pdt['Descrição Magento'].str.contains('KIT').any()) or (pdt['Marca'].str.contains('AZ').any())):
@@ -210,7 +209,6 @@ if check_password():
                 pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','AZ')
                 ##caso deixar a solução AZ sem marca
                 #pdt['Marca'] = pdt['Marca'].str.replace('AZ','')
-                
                 st.markdown('Marca principal: AZ')
 
             elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
@@ -238,8 +236,6 @@ if check_password():
             ########################################################################################################
             ###############################################################################################################  
 
-            with st.spinner('Aguarde...'):
-                time.sleep(2)
 
 
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
@@ -312,8 +308,9 @@ if check_password():
             
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
-            st.write(escola)
-            operacao
+            
+            #operacao
+            st.divider()
 
             with st.spinner('Aguarde...'):
                 time.sleep(3)
@@ -358,12 +355,15 @@ if check_password():
                     )
 
             ###### DEBUG COM FILTRO
-            selected = st.selectbox('Selecione a série:', ['',*pdt['Série'].unique()])
+            st.divider()
+            st.write(escola)
+            filter = pdt[['Escola','Marca','Segmento','Série','Bimestre','Nome','Descrição Magento','Quantidade de alunos','Customer Group']]
+            selected = st.selectbox('Selecione a série:', ['',*filter['Série'].unique()])
             if selected:
-                selected_serie = pdt[pdt['Série'] == selected]
+                selected_serie = filter[filter['Série'] == selected]
                 selected_serie
             else:
-                pdt
+                filter
             ##################
 
 
@@ -378,7 +378,7 @@ if check_password():
         cliente_tipo = 'B2C'
 
         st.info("Simulador - CONEXIA B2C")
-        agree = st.checkbox('Marque para usar o cálculo do script')
+        #agree = st.checkbox('Marque para usar o cálculo do script')
         #  29.271.264/0001-61
         cliente = st.text_input('Digite o CNPJ da escola:')
         # Carrega o arquivo
@@ -408,24 +408,24 @@ if check_password():
             #simul = pd.concat([simul1,simul2,simul3,simul4])
             simul = simul[simul['Quantidade de alunos']>0]
             
-            if agree:
-                desconto = pd.read_excel(file, sheet_name='Formulário Anual 2024')
-                desconto = desconto.iloc[:, :6] 
-                desconto = desconto[['FORMULÁRIO DE AQUISIÇÃO DE MATERIAL DIDÁTICO','Unnamed: 5']]
-                desconto = desconto.rename(columns={'FORMULÁRIO DE AQUISIÇÃO DE MATERIAL DIDÁTICO':'Série','Unnamed: 5':'% Desconto Extra%'})
-            
-                indice = [25,26,27,28,29,47,48,49,50,51,67,68,69,70,84,85,98,112,113]
-                desconto = desconto.iloc[indice]
-
-                del(simul['% Desconto Extra'])
-                del(simul['% Desconto Total'])
-                simul = simul.drop_duplicates()
-                
-                simul = pd.merge(simul, desconto, on=['Série'], how='inner')
-                simul['% Desconto Volume'] = simul['% Desconto Volume'].apply(lambda x: x[:-1])
-                simul['% Desconto Volume'] = simul['% Desconto Volume'].astype('float64')/100
-                simul['% Desconto Total'] = simul['% Desconto Extra%'] + simul['% Desconto Volume']
-                simul = simul.rename(columns={'% Desconto Extra%':'% Desconto Extra'})
+            #if agree:
+            #    desconto = pd.read_excel(file, sheet_name='Formulário Anual 2024')
+            #    desconto = desconto.iloc[:, :6] 
+            #    desconto = desconto[['FORMULÁRIO DE AQUISIÇÃO DE MATERIAL DIDÁTICO','Unnamed: 5']]
+            #    desconto = desconto.rename(columns={'FORMULÁRIO DE AQUISIÇÃO DE MATERIAL DIDÁTICO':'Série','Unnamed: 5':'% Desconto Extra%'})
+            #
+            #    indice = [25,26,27,28,29,47,48,49,50,51,67,68,69,70,84,85,98,112,113]
+            #    desconto = desconto.iloc[indice]
+#
+            #    del(simul['% Desconto Extra'])
+            #    del(simul['% Desconto Total'])
+            #    simul = simul.drop_duplicates()
+            #    
+            #    simul = pd.merge(simul, desconto, on=['Série'], how='inner')
+            #    simul['% Desconto Volume'] = simul['% Desconto Volume'].apply(lambda x: x[:-1])
+            #    simul['% Desconto Volume'] = simul['% Desconto Volume'].astype('float64')/100
+            #    simul['% Desconto Total'] = simul['% Desconto Extra%'] + simul['% Desconto Volume']
+            #    simul = simul.rename(columns={'% Desconto Extra%':'% Desconto Extra'})
             
             simul = simul.rename(columns={'Construindo a Alfabetização':'Alfabetização','Itinerários Formativos Micro cursos     (2 IF)':'Itinerários',
                                           'H5 - (3 Horas) Language Book + CLIL e PBL ':'H5 - 3 Horas','H5 - (2 horas)\nInternational Journey + \nApp H5':'H5 - 2 horas Journey',
@@ -583,9 +583,6 @@ if check_password():
             ########################################################################################################
             ###############################################################################################################  
 
-            with st.spinner('Aguarde...'):
-                time.sleep(2)
-
 
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
             pdt['SKU'] = pdt['Escola'] + pdt['Marca'] + pdt['Serial']
@@ -655,8 +652,9 @@ if check_password():
             
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
-            st.write(escola)
             #operacao
+
+            st.divider()
 
             with st.spinner('Aguarde...'):
                 time.sleep(3)
@@ -701,10 +699,13 @@ if check_password():
                     )
             
             ###### DEBUG COM FILTRO
-            selected = st.selectbox('Selecione a série:', ['',*pdt['Série'].unique()])
+            st.divider()
+            st.write(escola)
+            filter = pdt[['Escola','Marca','Segmento','Série','Bimestre','Nome','Descrição Magento','Quantidade de alunos','Customer Group']]
+            selected = st.selectbox('Selecione a série:', ['',*filter['Série'].unique()])
             if selected:
-                selected_serie = pdt[pdt['Série'] == selected]
+                selected_serie = filter[filter['Série'] == selected]
                 selected_serie
             else:
-                pdt
+                filter
             ##################
