@@ -348,10 +348,12 @@ if check_password():
             df_brinde_final = df_brinde_final.rename(columns= {'Nome da Regra':'nome_da_regra','Status':'status','Grupo do Cliente':'grupo_do_cliente',
                                                                'Sku Condicao':'sku_condicao','Qtd Condicao':'qtd_condicao','Sku Brinde':'sku_brinde','Qtd Incremento':'qtd_incremento'})
             df_brinde_final = df_brinde_final.sort_values(by=['grupo_do_cliente','nome_da_regra'])
-            #df_brinde_final['id'] = range(1, len(df_brinde_final) + 1)
-            #df_brinde_final = [['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
+            df_brinde_final['id'] = ''
+            df_brinde_final = df_brinde_final[['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
+            
+
             
             #operacao
             st.divider()
@@ -381,22 +383,23 @@ if check_password():
                 )
                 
             with col2:
-                    solucao = convert_df(solucao)
-                    st.download_button(
-                    label="Download da solução",
-                        data=solucao,
-                        file_name=f'{today}-{escola}-solucao.csv',
-                        mime='text/csv'
-                    )
+                solucao = convert_df(solucao)
+                st.download_button(
+                label="Download da solução",
+                    data=solucao,
+                    file_name=f'{today}-{escola}-solucao.csv',
+                    mime='text/csv'
+                )
                     
             with col3:
-                    df_brinde_final = convert_df(df_brinde_final)
-                    st.download_button(
-                    label="Download do brinde",
-                        data=df_brinde_final,
-                        file_name=f'{today}-{escola}-brinde.csv',
-                        mime='text/csv'
-                    )
+                df_brinde_final = convert_df(df_brinde_final)
+                st.download_button(
+                label="Download do brinde",
+                    data=df_brinde_final,
+                    file_name=f'{today}-{escola}-brinde.csv',
+                    mime='text/csv'
+                )
+               
 
             ###### DEBUG COM FILTRO
             st.divider()
