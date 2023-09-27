@@ -180,8 +180,15 @@ if check_password():
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Ensino Médio','ENSINO MÉDIO')
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('PV','PRÉ VESTIBULAR')
             df_cliente=df_cliente.assign(Extra="")
+
             ###regra do AZ e Plataforma
             df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
+
+            ####regra do h5
+            df_cliente.loc[(df_cliente['H5 Plus'] == 1) & (df_cliente['H5 - 2 horas Journey'] == 1), ['H5 - 2 horas Journey','H5 - 3 Horas']] = 0
+            df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
+
+
             ####
             df_client = df_cliente.copy()
             lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
@@ -259,14 +266,14 @@ if check_password():
                 
                     
             #################### Regra H5 #######################################################
-            if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
-                pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
-                #pdt
-
-            if (pdt['Produto'].str.contains('H5 Plus').any()):
-                pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
-                pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
-                #pdt
+            #if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
+            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+            #    #pdt
+#
+            #if (pdt['Produto'].str.contains('H5 Plus').any()):
+            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
+            #    #pdt
             ########################################################################################################
             ###############################################################################################################  
 
@@ -526,6 +533,12 @@ if check_password():
             ###regra do AZ e Plataforma
             df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
             ####
+            ####regra do h5
+            df_cliente.loc[(df_cliente['H5 Plus'] == 1) & (df_cliente['H5 - 2 horas Journey'] == 1), ['H5 - 2 horas Journey','H5 - 3 Horas']] = 0
+            df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
+
+
+
             df_client = df_cliente.copy()
             lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM',
                      '5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024',
@@ -595,29 +608,7 @@ if check_password():
                 st.markdown('Marca principal: MY LIFE')
 
             
-             #################### Regra H5 #######################################################
-            
-            if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
-                pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
-                #pdt
-
-            if (pdt['Produto'].str.contains('H5 Plus').any()):
-                pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
-                pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
-
-                #pdt
-            #pdt_full = pdt[~(pdt['Marca'] == 'HIGH FIVE')]
-            #pdt_high = pdt[pdt['Marca'] == 'HIGH FIVE']
-            #if (pdt['Marca'] == 'HIGH FIVE').any():
-            #    for i in pdt_high['Série'].unique():
-            #        if
-            
-
-
-            
-
-            
-            ########################################################################################################
+            #################### 
             ###############################################################################################################  
 
 
