@@ -60,7 +60,7 @@ if check_password():
     st.sidebar.title('Script de solução - Simulador')
 
 
-    page = ['CONEXIA B2B','CONEXIA B2C','SEB','PREMIUM/UNIQUE']
+    page = ['CONEXIA B2B','CONEXIA B2C','SEB','PREMIUM/UNIQUE','EXCEL PARA CSV', 'CSV PARA EXCEL']
     choice = st.sidebar.selectbox('Selecione:',page)
     
     
@@ -680,25 +680,7 @@ if check_password():
             solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
             
             
-            #df_brinde = operacao[['CNPJ','SKU','Série','Bimestre','Descrição Magento','Cód Itens','Customer Group']]
-            #df_brinde_input = pd.read_excel(planilha, sheet_name='brinde')
-            #df_brinde = pd.merge(df_brinde,df_brinde_input, on=['Cód Itens'], how='inner')
-            #df_brinde_final = df_brinde.copy()
-            #df_brinde_final = df_brinde_final[['Série_x','Nome da Regra','Customer Group','SKU_x','SKU_y']]
-            #df_brinde_final['Status'] = 'ATIVO'
-            #df_brinde_infantil = df_brinde_final.loc[df_brinde_final['Série_x'].str.contains('Grupo')]
-            #df_brinde_infantil['Qtd Incremento'] = 11
-            #df_brinde_demais = df_brinde_final.loc[~df_brinde_final['Série_x'].str.contains('Grupo')]
-            #df_brinde_demais['Qtd Incremento'] = 20
-            #df_brinde_final = pd.concat([df_brinde_infantil,df_brinde_demais])
-            #df_brinde_final['Qtd Condicao'] = 1
-            #df_brinde_final = df_brinde_final.rename(columns={'Customer Group':'Grupo do Cliente','SKU_x':'Sku Condicao','SKU_y':'Sku Brinde'})
-            #df_brinde_final = df_brinde_final[['Nome da Regra','Status','Grupo do Cliente','Sku Condicao','Qtd Condicao','Sku Brinde','Qtd Incremento']]
-            #df_brinde_final = df_brinde_final.rename(columns= {'Nome da Regra':'nome_da_regra','Status':'status','Grupo do Cliente':'grupo_do_cliente',
-            #                                                   'Sku Condicao':'sku_condicao','Qtd Condicao':'qtd_condicao','Sku Brinde':'sku_brinde','Qtd Incremento':'qtd_incremento'})
-            #df_brinde_final = df_brinde_final.sort_values(by=['grupo_do_cliente','nome_da_regra'])
-            #df_brinde_final['id'] = range(1, len(df_brinde_final) + 1)
-            #df_brinde_final = [['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
+
 
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
@@ -752,14 +734,6 @@ if check_password():
                     )
                     
                     
-            #with col3:
-            #        df_brinde_final = convert_df(df_brinde_final)
-            #        st.download_button(
-            #        label="Download do brinde",
-            #            data=df_brinde_final,
-            #            file_name=f'{today}-{escola}-brinde.csv',
-            #            mime='text/csv'
-            #        )
             
             ###### DEBUG COM FILTRO
             st.divider()
@@ -773,4 +747,62 @@ if check_password():
                 selected_serie
             else:
                 filter
-            ##################
+
+
+
+
+############################################################################################################################################
+
+    if choice == 'EXCEL PARA CSV':
+        st.info('Conversor de arquivos')
+
+        st.title('SOLUÇÃO EXCEL PARA CSV')
+        col1, col2 = st.columns(2)
+        with col1:
+            nome = st.text_input('Informe um nome para salvar o arquivo', 'Nome do arquivo')
+
+        with col2:  
+            file = st.file_uploader("Selecione um arquivo Excel", type=["xlsx"])
+
+        if file:
+            df = pd.read_excel(file)
+
+            with st.spinner('Aguarde...'):
+                time.sleep(1)
+                st.success('Concluído com sucesso!', icon="✅")
+    
+            csv = df.to_csv(index=False).encode('UTF-8')
+            st.download_button(
+            label="Download do CSV",
+                        data=csv,
+                        file_name=f'{nome}.csv',
+                        mime='text/csv'
+                )
+        
+    if choice == 'CSV PARA EXCEL':
+        st.info('Conversor de arquivos')
+
+        st.title('SOLUÇÃO CSV PARA EXCEL')
+        col1, col2 = st.columns(2)
+        with col1:
+            nome = st.text_input('Informe um nome para salvar o arquivo', 'Nome do arquivo')
+
+        with col2:  
+            file = st.file_uploader("Selecione um arquivo em csv", type=["csv"])
+
+        if file:
+            df = pd.read_csv(file)
+            with st.spinner('Aguarde...'):
+                time.sleep(1)
+                st.success('Concluído com sucesso!', icon="✅")
+    
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df.to_excel(writer, index=False, sheet_name='Sheet1')
+            # Configurar os parâmetros para o botão de download
+            st.download_button(
+                label="Download Excel",
+                data=output.getvalue(),
+                file_name=f'{nome}.xlsx',
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
