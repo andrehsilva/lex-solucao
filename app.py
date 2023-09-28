@@ -131,7 +131,6 @@ if check_password():
             simul = simul.rename(columns={'Construindo a Alfabetização':'Alfabetização','Itinerários Formativos Micro cursos     (2 IF)':'Itinerários','H5 - (3 Horas) Language Book + CLIL e PBL ':'H5 - 3 Horas','H5 - (2 horas)\nInternational Journey + \nApp H5':'H5 - 2 horas Journey','H5 Plus\n (3 horas extras)':'H5 Plus','My Life\n(Base)':'My Life - Base','My Life\n(2024)':'My Life - 2024','Binoculo By Tell Me\n(Base)':'Binoculo - Base','Educacross Ed. Infantil\n(Base)':'Educacross Infantil - Base','Educacross\n(Base)':'Educacross - Base','Educacross AZ\n(Base)':'Educacross AZ - Base','Educacross H5\n(Base)':'Educacross H5 - Base','Ubbu\n(Base)':'Ubbu - Base','Binoculo By Tell Me\n(2024)':'Binoculo - 2024','Educacross Ed. Infantil\n(2024)':'Educacross Infantil - 2024','Educacross\n(2024)':'Educacross - 2024','Educacross AZ\n(2024)':'Educacross AZ - 2024','Educacross H5\n(2024)':'Educacross H5 - 2024','Ubbu\n(2024)':'Ubbu - 2024','Árvore\n(1 Módulo)':'Árvore 1 Módulo','Árvore\n(2 Módulos)':'Árvore 2 Módulos','Árvore\n(3 Módulos)':'Árvore 3 Módulos','total aluno/ano\nsem desconto':'total aluno sem desconto','total aluno/ano\ncom desconto sem complementar':'total aluno com desconto sem complementar','total aluno/ano\ncom desconto + Complementares':'total aluno com desconto com Complementares',})
             
             simul = simul[['Série','Segmento','Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês','% Desconto Volume','Quantidade de alunos','Razão Social','CNPJ','Squad','Tipo','Observação','Grupo de cliente','Bimestre','% Desconto Extra','% Desconto Total']]
-            
             #simul.to_excel('simul.xlsx')
 
             simulador = simul.copy()
@@ -209,7 +208,7 @@ if check_password():
             p = p.reset_index()
             p = p.drop(columns=['index'])
             p = p.drop_duplicates()
-            #p
+            
 
             itens = pd.read_excel(planilha, sheet_name=sheetname)
             itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
@@ -251,6 +250,7 @@ if check_password():
                 ##caso deixar a solução AZ sem marca
                 #pdt['Marca'] = pdt['Marca'].str.replace('AZ','')
                 st.markdown('Marca principal: AZ')
+                
 
             elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
                 pdt = pdt[pdt['Bimestre'] == 'ANUAL']
@@ -263,8 +263,8 @@ if check_password():
                 pdt = pdt[pdt['Bimestre'] == 'ANUAL']
                 pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
                 st.markdown('Marca principal: MY LIFE')
-                
-                    
+             
+            
             #################### Regra H5 #######################################################
             #if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
             #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
@@ -302,9 +302,10 @@ if check_password():
             solucao['cliente_produto'] = cliente_tipo
             solucao['ativar_restricao'] = 'S'
             #solucao.to_csv('teste_solução.csv')
-
+            #solucao
             categoria = pd.read_excel(planilha, sheet_name='categoriab2b')
             solucao = pd.merge(solucao,categoria, on=['Série'], how='inner')
+            #solucao
             solucao['Categorias'] = solucao['Marca'] + '/' + solucao['Categorias']
             solucao = solucao.sort_values(by=['Bimestre','Série'], ascending=True)
             solucao = solucao.rename(columns={'Público':'grupo_de_atributo','Marca':'marca_produto', 'Nome':'nome', 'SKU':'sku', 'Ano':'ano_produto', 'Série':'serie_produto', 'Bimestre':'utilizacao_produto', 'Categorias':'categorias', '2024+':'items', 'Customer Group':'grupos_permissao'})
@@ -383,9 +384,19 @@ if check_password():
                 )
                 
             with col2:
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    solucao.to_excel(writer, index=False, sheet_name='Sheet1')
+                # Configurar os parâmetros para o botão de download
+                st.download_button(
+                    label="Download Solução (XLSX)",
+                    data=output.getvalue(),
+                    file_name=f'{today}-{escola}-solucao.xlsx',
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
                 solucao = convert_df(solucao)
                 st.download_button(
-                label="Download da solução",
+                label="Download Solução (CSV) ",
                     data=solucao,
                     file_name=f'{today}-{escola}-solucao.csv',
                     mime='text/csv'
@@ -403,7 +414,9 @@ if check_password():
 
             ###### DEBUG COM FILTRO
             st.divider()
-            st.write(escola)
+            st.write("Cliente:", escola)
+            st.divider()
+            st.write('Resultado:')
             filter = pdt[['Escola','Marca','Segmento','Série','Bimestre','Nome','Descrição Magento','Quantidade de alunos','Customer Group']]
             selected = st.selectbox('Selecione a série:', ['',*filter['Série'].unique()])
             if selected:
@@ -463,7 +476,7 @@ if check_password():
             #
             #    indice = [25,26,27,28,29,47,48,49,50,51,67,68,69,70,84,85,98,112,113]
             #    desconto = desconto.iloc[indice]
-#
+
             #    del(simul['% Desconto Extra'])
             #    del(simul['% Desconto Total'])
             #    simul = simul.drop_duplicates()
@@ -616,8 +629,10 @@ if check_password():
 
 
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
-            pdt['SKU'] = pdt['Escola'] + pdt['Marca'] + pdt['Serial']
+            pdt['Marca'] = pdt['Marca'].str.replace('AZ B2C','AZ')
+            pdt['SKU'] = pdt['Escola'] + pdt['Marca'] + "B2C2023" + pdt['Serial']
             pdt['SKU'] = pdt['SKU'].str.replace(' ','')
+            pdt['SKU']
         
             
             
@@ -710,20 +725,32 @@ if check_password():
                     operacao.to_excel(writer, index=False, sheet_name='Sheet1')
                     # Configurar os parâmetros para o botão de download
                 st.download_button(
-                        label="Download do cadastro",
+                        label="Download do cadastro (XLSX)",
                     data=output.getvalue(),
                     file_name=f'{today}-{escola}-operacao.xlsx',
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
                 
             with col2:
+                    output = io.BytesIO()
+                    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                        solucao.to_excel(writer, index=False, sheet_name='Sheet1')
+                    # Configurar os parâmetros para o botão de download
+                    st.download_button(
+                        label="Download Solução (XLSX)",
+                        data=output.getvalue(),
+                        file_name=f'{today}-{escola}-solucao.xlsx',
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+            with col3:
                     solucao = convert_df(solucao)
                     st.download_button(
-                    label="Download da solução",
+                    label="Download Solução (CSV)",
                         data=solucao,
                         file_name=f'{today}-{escola}-solucao.csv',
                         mime='text/csv'
                     )
+                    
                     
             #with col3:
             #        df_brinde_final = convert_df(df_brinde_final)
@@ -736,8 +763,10 @@ if check_password():
             
             ###### DEBUG COM FILTRO
             st.divider()
-            st.write(escola)
-            filter = pdt[['Escola','Marca','Segmento','Série','Bimestre','Nome','Descrição Magento','Quantidade de alunos','Customer Group']]
+            st.write("Cliente:", escola)
+            st.divider()
+            st.write('Resultado:')
+            filter = pdt[['Escola','Marca','Segmento','Série','SKU','Bimestre','Nome','Descrição Magento','Quantidade de alunos','Customer Group']]
             selected = st.selectbox('Selecione a série:', ['',*filter['Série'].unique()])
             if selected:
                 selected_serie = filter[filter['Série'] == selected]
