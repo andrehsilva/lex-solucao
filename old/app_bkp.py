@@ -43,6 +43,7 @@ if check_password():
 
         st.info("Simulador - CONEXIA B2B")
         agree = st.checkbox('Marque para usar o cálculo do script')
+        st.write("36.214.347/0001-84")
         #  29.271.264/0001-61
         cliente = st.text_input('Digite o CNPJ da escola:')
         # Carrega o arquivo
@@ -115,7 +116,7 @@ if check_password():
             df_cliente['Itinerários'] = df_cliente['Itinerários'].where(df_cliente['Itinerários'] == 0, 1)
             df_cliente['H5 - 3 Horas'] = df_cliente['H5 - 3 Horas'].where(df_cliente['H5 - 3 Horas'] == 0, 1)
             df_cliente['H5 - 2 horas Journey'] = df_cliente['H5 - 2 horas Journey'].where(df_cliente['H5 - 2 horas Journey'] == 0, 1)
-            df_cliente['H5 Plus)'] = df_cliente['H5 Plus'].where(df_cliente['H5 Plus'] == 0, 1)
+            df_cliente['H5 Plus'] = df_cliente['H5 Plus'].where(df_cliente['H5 Plus'] == 0, 1)
             df_cliente['My Life - Base'] = df_cliente['My Life - Base'].where(df_cliente['My Life - Base'] == 0, 1)
             df_cliente['My Life - 2024'] = df_cliente['My Life - 2024'].where(df_cliente['My Life - 2024'] == 0, 1)
             df_cliente['Binoculo - Base'] = df_cliente['Binoculo - Base'].where(df_cliente['Binoculo - Base'] == 0, 1)
@@ -146,6 +147,9 @@ if check_password():
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Ensino Médio','ENSINO MÉDIO')
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('PV','PRÉ VESTIBULAR')
             df_cliente=df_cliente.assign(Extra="")
+            ###regra do AZ e Plataforma
+            df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
+            ####
             df_client = df_cliente.copy()
             lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
             
@@ -156,6 +160,7 @@ if check_password():
                 df_client.loc[df_client[item] == 1.0, item] = item
             COLUNAS = ['Série', 'Segmento','% Desconto Volume','% Desconto Extra','% Desconto Total','Quantidade de alunos','Razão Social','CNPJ','Bimestre','Squad','Tipo','Extra']
             p = pd.DataFrame(columns=COLUNAS)
+            
             for i in lista:
                 data = df_client[df_client[i] == i].groupby(['Série', 'Segmento','% Desconto Volume','% Desconto Extra','% Desconto Total','Quantidade de alunos','Razão Social','CNPJ','Squad','Tipo','Bimestre',i])['Extra'].count().reset_index()
                 data = data.rename(columns={i: 'Produto'})
@@ -164,6 +169,7 @@ if check_password():
             p = p.reset_index()
             p = p.drop(columns=['index'])
             p = p.drop_duplicates()
+            p
             
 
             itens = pd.read_excel(planilha, sheet_name=sheetname)
@@ -176,7 +182,6 @@ if check_password():
             cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
             
             pdt = pd.merge(pdt, cod_serial, on=['Série','Bimestre','Segmento','Público'], how='inner')
-            
 
             pdt['Ano'] = '2024'
             pdt['SKU'] = pdt['Ano'] + pdt['Serial']
@@ -191,11 +196,14 @@ if check_password():
             cod_nome = pd.read_excel(planilha, sheet_name='nome')
             cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
             pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
-            
+            pdt
 
+            
             ####################################################################################################
             ######regra para tirar anual da marca Conexia#####################################################
-            if (pdt['Descrição Magento'].str.contains('KIT').any()):
+
+
+            if (pdt['Marca'].str.contains('AZ').any()):
             #if ((pdt['Descrição Magento'].str.contains('KIT').any()) or (pdt['Marca'].str.contains('AZ').any())):
                 pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('ANUAL')))]
                 pdt = pdt[~((pdt['Marca'] == 'AZ') & (pdt['Bimestre'].str.contains('ANUAL')))]
@@ -204,7 +212,7 @@ if check_password():
                 pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','AZ')
                 ##caso deixar a solução AZ sem marca
                 #pdt['Marca'] = pdt['Marca'].str.replace('AZ','')
-                #pdt
+                
                 st.markdown('Marca principal: AZ')
 
             elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
@@ -212,15 +220,16 @@ if check_password():
                 pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','HIGH FIVE')
                 pdt['Marca'] = pdt['Marca'].str.replace('AZ','HIGH FIVE')
                 st.markdown('Marca principal: HIGH FIVE')
-                #pdt
+                
 
             elif (pdt['Marca'].str.contains('MY LIFE').any()):
                 pdt = pdt[pdt['Bimestre'] == 'ANUAL']
                 pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
                 st.markdown('Marca principal: MY LIFE')
-                #pdt
-            
-            ######### Regra H5
+                
+            pdt
+                    
+            #################### Regra H5 #######################################################
             if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
                 pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
                 #pdt
@@ -229,9 +238,8 @@ if check_password():
                 pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
                 pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
                 #pdt
-                ########################################################################################################
+            ########################################################################################################
             ###############################################################################################################  
-
 
             with st.spinner('Aguarde...'):
                 time.sleep(2)
@@ -308,7 +316,7 @@ if check_password():
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
             st.write(escola)
-            operacao
+            #operacao
 
             with st.spinner('Aguarde...'):
                 time.sleep(3)
@@ -352,7 +360,3 @@ if check_password():
                         mime='text/csv'
                     )
 
-
-
-
-    

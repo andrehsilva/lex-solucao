@@ -185,15 +185,13 @@ if check_password():
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Ensino Médio','ENSINO MÉDIO')
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('PV','PRÉ VESTIBULAR')
             df_cliente=df_cliente.assign(Extra="")
-          
 
             ###regra do AZ e Plataforma
             df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
-            
+
             ####regra do h5
             df_cliente.loc[(df_cliente['H5 Plus'] == 1) & (df_cliente['H5 - 2 horas Journey'] == 1), ['H5 - 2 horas Journey','H5 - 3 Horas']] = 0
             df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
-          
 
             ####
             df_client = df_cliente.copy()
@@ -216,6 +214,7 @@ if check_password():
             p = p.drop(columns=['index'])
             p = p.drop_duplicates()
             
+
             itens = pd.read_excel(planilha, sheet_name=sheetname)
             itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
             itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
@@ -240,49 +239,48 @@ if check_password():
             cod_nome = pd.read_excel(planilha, sheet_name='nome')
             cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
             pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
+            pdt
             
             ####################################################################################################
-            ######NOVAS REGRAS POR SÉRIE#####################################################
+            ######regra para tirar anual da marca Conexia#####################################################
             
-            serie = pdt['Série'].unique()
-            pdt_final = []
-            for i in serie:
-                pdt_serie = pdt.loc[pdt['Série'] == i]
-                pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
-                pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
 
-                if (pdt_serie['Marca'].str.contains('HIGH FIVE').any()):
-                    pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'HIGH FIVE'
-                if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
-                    pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'MY LIFE'
-                
-                pdt_final.append(pdt_serie)
-                pdt_full = pd.concat(pdt_final)
-
-            pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
-            pdt = pdt_full.copy()
-
-            #################################################################################    
-            #if (pdt['Marca'].str.contains('AZ').any()):
-                #pdt = pdt[~((pdt['Marca'] == 'AZ') & (pdt['Bimestre'].str.contains('ANUAL')))]
-                #pdt = pdt[~((pdt['Marca'] == 'MY LIFE') & (pdt['Bimestre'].str.contains('ANUAL')))]
-                #pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','AZ')
-                #pdt['Marca'] = pdt['Marca'].str.replace('MUNDO LEITOR','AZ')
+            if (pdt['Marca'].str.contains('AZ').any()):
+                pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('ANUAL')))]
+                pdt = pdt[~((pdt['Marca'] == 'AZ') & (pdt['Bimestre'].str.contains('ANUAL')))]
+                pdt = pdt[~((pdt['Marca'] == 'MY LIFE') & (pdt['Bimestre'].str.contains('ANUAL')))]
+                pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','AZ')
+                pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','AZ')
+                pdt['Marca'] = pdt['Marca'].str.replace('MUNDO LEITOR','AZ')
                 ##caso deixar a solução AZ sem marca
                 #pdt['Marca'] = pdt['Marca'].str.replace('AZ','')
+                st.markdown('Marca principal: AZ')
+                
 
-            #elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
-            #    pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','HIGH FIVE')
-            #    pdt['Marca'] = pdt['Marca'].str.replace('AZ','HIGH FIVE')
-            #    st.markdown('Marca principal: HIGH FIVE')    
+            elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
+                pdt = pdt[pdt['Bimestre'] == 'ANUAL']
+                pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','HIGH FIVE')
+                pdt['Marca'] = pdt['Marca'].str.replace('AZ','HIGH FIVE')
+                st.markdown('Marca principal: HIGH FIVE')
+                
 
-            ###elif (pdt['Marca'].str.contains('MY LIFE').any()):
-            ###    pdt = pdt[pdt['Bimestre'] == 'ANUAL']
-            ###    pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
-            ###    st.markdown('Marca principal: MY LIFE')
+            elif (pdt['Marca'].str.contains('MY LIFE').any()):
+                pdt = pdt[pdt['Bimestre'] == 'ANUAL']
+                pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
+                st.markdown('Marca principal: MY LIFE')
              
-            ################################################################################
-        
+            
+            #################### Regra H5 #######################################################
+            #if (pdt['Produto'].str.contains('H5 - 2 horas Journey').any()):
+            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+            #    #pdt
+            #if (pdt['Produto'].str.contains('H5 Plus').any()):
+            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 3 Horas'].index, inplace=True)
+            #    pdt.drop(pdt[pdt['Produto'] == 'H5 - 2 horas Journey'].index, inplace=True)
+            #    #pdt
+            ########################################################################################################
+
+
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
             pdt['SKU'] = pdt['Escola'] + '2024' + pdt['Marca'] + pdt['Serial']
             pdt['SKU'] = pdt['SKU'].str.replace(' ','')
@@ -392,8 +390,6 @@ if check_password():
             operacao['Série'] = operacao['Série'].str.replace('Grupo 5','5 ANOS')
             operacao['Série'] = operacao['Série'].str.replace('ano','ANO')
             operacao['Série'] = operacao['Série'].str.replace('série','SÉRIE')
-            operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS INICIAIS','FUNDAMENTAL I')
-            operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS FINAIS','FUNDAMENTAL II')
 
 
             
@@ -420,7 +416,7 @@ if check_password():
                     operacao.to_excel(writer, index=False, sheet_name='Sheet1')
                     # Configurar os parâmetros para o botão de download
                 st.download_button(
-                        label="Download do cadastro (XLSX)",
+                        label="Download do cadastro",
                     data=output.getvalue(),
                     file_name=f'{today}-{escola}-operacao.xlsx',
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -448,7 +444,7 @@ if check_password():
             with col3:
                 df_brinde_final = convert_df(df_brinde_final)
                 st.download_button(
-                label="Download do brinde (CSV)",
+                label="Download do brinde",
                     data=df_brinde_final,
                     file_name=f'{today}-{escola}-brinde.csv',
                     mime='text/csv'
@@ -759,8 +755,6 @@ if check_password():
             operacao['Série'] = operacao['Série'].str.replace('Grupo 5','5 ANOS')
             operacao['Série'] = operacao['Série'].str.replace('ano','ANO')
             operacao['Série'] = operacao['Série'].str.replace('série','SÉRIE')
-            operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS INICIAIS','FUNDAMENTAL I')
-            operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS FINAIS','FUNDAMENTAL II')
 
 
             ######## Exibir na tela para conferência #####
@@ -1119,8 +1113,6 @@ if check_password():
                 operacao['Série'] = operacao['Série'].str.replace('Grupo 5','5 ANOS')
                 operacao['Série'] = operacao['Série'].str.replace('ano','ANO')
                 operacao['Série'] = operacao['Série'].str.replace('série','SÉRIE')
-                operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS INICIAIS','FUNDAMENTAL I')
-                operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS FINAIS','FUNDAMENTAL II')
 
                 
 

@@ -29,4 +29,3 @@ def check_password():
         # Password correct.
         return True
 
-check_password()
