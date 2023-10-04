@@ -256,11 +256,16 @@ if check_password():
 
                 if (pdt_serie['Marca'].str.contains('AZ').any()):
                     pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('ANUAL')))]
-                    pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
+                    pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'AZ') & (pdt_serie['Bimestre'].str.contains('ANUAL')))]
+                    #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
+                    pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('ANUAL')))]
+                    pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MY LIFE','AZ')
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('CONEXIA','AZ')
                 else:
                     pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
-                ######End Regra a definir   
+                    pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('CONEXIA','HIGH FIVE')
+                    #pdt_serie
+                 
 
                 if (pdt_serie['Marca'].str.contains('HIGH FIVE').any()):
                     pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'HIGH FIVE'
@@ -270,8 +275,10 @@ if check_password():
                 pdt_final.append(pdt_serie)
                 pdt_full = pd.concat(pdt_final)
 
-            pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
+            #pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
             pdt = pdt_full.copy()
+
+            ######End Regra   
 
             #################################################################################    
             #if (pdt['Marca'].str.contains('AZ').any()):
@@ -335,6 +342,7 @@ if check_password():
             operacao['Nome'] = operacao['Nome'].str.replace('FUNDAMENTAL ANOS INICIAIS','EFI')
             operacao['Nome'] = operacao['Nome'].str.replace('FUNDAMENTAL ANOS FINAIS','EFII')
             operacao['Nome'] = operacao['Nome'].str.replace('ENSINO MÉDIO','EM')
+            
             
             solucao['serie_produto'] = solucao['serie_produto'].str.replace('°','º')
             solucao['serie_produto'] = solucao['serie_produto'].str.replace('Grupo 1','1 ANO')
@@ -405,6 +413,14 @@ if check_password():
             operacao['Série'] = operacao['Série'].str.replace('série','SÉRIE')
             operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS INICIAIS','FUNDAMENTAL I')
             operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS FINAIS','FUNDAMENTAL II')
+            operacao['Nome'] = operacao['Nome'].str.replace('Extensivo','EXTENSIVO')
+            operacao['Nome'] = operacao['Nome'].str.replace('Semi','SEMI')
+            operacao['Série'] = operacao['Série'].str.replace('Extensivo','PRE VESTIBULAR')
+            operacao['Série'] = operacao['Série'].str.replace('Semi','SEMI EXTENSIVO II')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Extensivo','PRE VESTIBULAR')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Semi','SEMI EXTENSIVO II')
+            solucao['nome'] = solucao['nome'].str.replace('Extensivo','EXTENSIVO')
+            solucao['nome'] = solucao['nome'].str.replace('Semi','SEMI')
 
 
             
@@ -452,7 +468,7 @@ if check_password():
                 st.download_button(
                 label="Download Solução (CSV) ",
                     data=solucao,
-                    file_name=f'{today}-{escola}-solucao.csv',
+                    file_name=f'{today}-{escola}-solucao_import.csv',
                     mime='text/csv'
                 )
                     
@@ -461,7 +477,7 @@ if check_password():
                 st.download_button(
                 label="Download do brinde (CSV)",
                     data=df_brinde_final,
-                    file_name=f'{today}-{escola}-brinde.csv',
+                    file_name=f'{today}-{escola}-brinde_import.csv',
                     mime='text/csv'
                 )
                
@@ -772,6 +788,16 @@ if check_password():
             operacao['Série'] = operacao['Série'].str.replace('série','SÉRIE')
             operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS INICIAIS','FUNDAMENTAL I')
             operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS FINAIS','FUNDAMENTAL II')
+            operacao['Nome'] = operacao['Nome'].str.replace('Extensivo','EXTENSIVO')
+            operacao['Nome'] = operacao['Nome'].str.replace('Semi','SEMI')
+            operacao['Série'] = operacao['Série'].str.replace('Extensivo','PRE VESTIBULAR')
+            operacao['Série'] = operacao['Série'].str.replace('Semi','SEMI EXTENSIVO II')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Extensivo','PRE VESTIBULAR')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Semi','SEMI EXTENSIVO II')
+            solucao['nome'] = solucao['nome'].str.replace('Extensivo','EXTENSIVO')
+            solucao['nome'] = solucao['nome'].str.replace('Semi','SEMI')
+
+            
 
 
             ######## Exibir na tela para conferência #####
@@ -821,7 +847,7 @@ if check_password():
                     st.download_button(
                     label="Download Solução (CSV)",
                         data=solucao,
-                        file_name=f'{today}-{escola}-solucao.csv',
+                        file_name=f'{today}-{escola}-solucao_import.csv',
                         mime='text/csv'
                     )
                     
@@ -1132,6 +1158,14 @@ if check_password():
                 operacao['Série'] = operacao['Série'].str.replace('série','SÉRIE')
                 operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS INICIAIS','FUNDAMENTAL I')
                 operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS FINAIS','FUNDAMENTAL II')
+                operacao['Nome'] = operacao['Nome'].str.replace('Extensivo','EXTENSIVO')
+                operacao['Nome'] = operacao['Nome'].str.replace('Semi','SEMI')
+                operacao['Série'] = operacao['Série'].str.replace('Extensivo','PRE VESTIBULAR')
+                operacao['Série'] = operacao['Série'].str.replace('Semi','SEMI EXTENSIVO II')
+                solucao['serie_produto'] = solucao['serie_produto'].str.replace('Extensivo','PRE VESTIBULAR')
+                solucao['serie_produto'] = solucao['serie_produto'].str.replace('Semi','SEMI EXTENSIVO II')
+                solucao['nome'] = solucao['nome'].str.replace('Extensivo','EXTENSIVO')
+                solucao['nome'] = solucao['nome'].str.replace('Semi','SEMI')
 
                 
 
@@ -1198,7 +1232,7 @@ if check_password():
                     st.download_button(
                     label="Download Solução (CSV) ",
                         data=solucao,
-                        file_name=f'{today}-{escola}-solucao.csv',
+                        file_name=f'{today}-{escola}-solucao_import.csv',
                         mime='text/csv'
                     )
 
@@ -1207,7 +1241,7 @@ if check_password():
                     st.download_button(
                     label="Download do brinde",
                         data=df_brinde_final,
-                        file_name=f'{today}-{escola}-brinde.csv',
+                        file_name=f'{today}-{escola}-brinde_import.csv',
                         mime='text/csv'
                     )
 
