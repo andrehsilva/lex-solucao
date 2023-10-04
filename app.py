@@ -249,7 +249,7 @@ if check_password():
             for i in serie:
                 pdt_serie = pdt.loc[pdt['Série'] == i]
 
-                ######Regra a definir
+                ######Regras
 
                 #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
                 #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
@@ -279,27 +279,6 @@ if check_password():
             pdt = pdt_full.copy()
 
             ######End Regra   
-
-            #################################################################################    
-            #if (pdt['Marca'].str.contains('AZ').any()):
-                #pdt = pdt[~((pdt['Marca'] == 'AZ') & (pdt['Bimestre'].str.contains('ANUAL')))]
-                #pdt = pdt[~((pdt['Marca'] == 'MY LIFE') & (pdt['Bimestre'].str.contains('ANUAL')))]
-                #pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','AZ')
-                #pdt['Marca'] = pdt['Marca'].str.replace('MUNDO LEITOR','AZ')
-                ##caso deixar a solução AZ sem marca
-                #pdt['Marca'] = pdt['Marca'].str.replace('AZ','')
-
-            #elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
-            #    pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','HIGH FIVE')
-            #    pdt['Marca'] = pdt['Marca'].str.replace('AZ','HIGH FIVE')
-            #    st.markdown('Marca principal: HIGH FIVE')    
-
-            ###elif (pdt['Marca'].str.contains('MY LIFE').any()):
-            ###    pdt = pdt[pdt['Bimestre'] == 'ANUAL']
-            ###    pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
-            ###    st.markdown('Marca principal: MY LIFE')
-             
-            ################################################################################
         
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
             pdt['SKU'] = pdt['Escola'] + '2024' + pdt['Marca'] + pdt['Serial']
@@ -679,37 +658,22 @@ if check_password():
             cod_nome = pd.read_excel(planilha, sheet_name='nome')
             cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
             pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
-             
-
-            if (pdt['Marca'].str.contains('AZ B2C').any()):
-                pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','AZ B2C')
-                pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','AZ B2C')
-                pdt['Marca'] = pdt['Marca'].str.replace('MUNDO LEITOR','AZ')
-                st.markdown('Marca principal: AZ B2C')
-
-            elif (pdt['Marca'].str.contains('HIGH FIVE').any()):
-                pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','HIGH FIVE')
-                pdt['Marca'] = pdt['Marca'].str.replace('AZ B2C','HIGH FIVE')
-                pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','HIGH FIVE')
-                st.markdown('Marca principal: HIGH FIVE')
-                
-
-            elif (pdt['Marca'].str.contains('MY LIFE').any()):
-                pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','MY LIFE')
-                st.markdown('Marca principal: MY LIFE')
-
             
-            #################### 
-            ###############################################################################################################  
+            ####################################################################################################
+            ######NOVAS REGRAS DA SOLUÇÃO #####################################################
+            pdt['Marca'] = pdt['Marca'].str.replace('MY LIFE','SOLUÇÃO')
+            pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','SOLUÇÃO')
+            pdt['Marca'] = pdt['Marca'].str.replace('HIGH FIVE','SOLUÇÃO')
+            pdt['Marca'] = pdt['Marca'].str.replace('AZ B2C','SOLUÇÃO')
+            
+         
 
 
-            pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
+            pdt['Nome'] = pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
             pdt['Marca'] = pdt['Marca'].str.replace('AZ B2C','AZ')
             pdt['SKU'] = pdt['Escola'] + pdt['Marca'] + "B2C2024" + pdt['Serial']
             pdt['SKU'] = pdt['SKU'].str.replace(' ','')
-            pdt['SKU']
         
-            
             
             operacoes = pdt[['Escola','CNPJ','Ano','Marca','Serial','Segmento','Série','Bimestre','Público','SKU','Nome',2024,'2024+','Descrição Magento','Quantidade de alunos','Valor de venda (B2C)','% Desconto Total','Customer Group','Squad']]
             operacoes = operacoes.rename(columns = {2024:'Cód Itens'} )
@@ -796,6 +760,8 @@ if check_password():
             solucao['serie_produto'] = solucao['serie_produto'].str.replace('Semi','SEMI EXTENSIVO II')
             solucao['nome'] = solucao['nome'].str.replace('Extensivo','EXTENSIVO')
             solucao['nome'] = solucao['nome'].str.replace('Semi','SEMI')
+            solucao['sku'] = solucao['sku'].str.replace('SOLUÇÃO','SOLUCAO')
+            operacao['SKU'] = operacao['SKU'].str.replace('SOLUÇÃO','SOLUCAO')
 
             
 
@@ -858,7 +824,7 @@ if check_password():
             st.write("Cliente:", escola)
             st.divider()
             st.write('Resultado:')
-            filter = pdt[['Escola','Marca','Segmento','Série','SKU','Bimestre','Nome','Descrição Magento','Quantidade de alunos','Customer Group']]
+            filter = operacao[['Escola','Marca','Segmento','Série','SKU','Bimestre','Nome','Descrição Magento','Quantidade de alunos','Customer Group']]
             selected = st.selectbox('Selecione a série:', ['',*filter['Série'].unique()])
             if selected:
                 selected_serie = filter[filter['Série'] == selected]
