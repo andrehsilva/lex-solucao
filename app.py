@@ -262,16 +262,26 @@ if check_password():
                     pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('ANUAL')))]
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MY LIFE','AZ')
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('CONEXIA','AZ')
+                    
+                    
+
                 else:
                     pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('CONEXIA','HIGH FIVE')
                     #pdt_serie
                  
+                if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
+                        pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
 
                 if (pdt_serie['Marca'].str.contains('HIGH FIVE').any()):
                     pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'HIGH FIVE'
+                    if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
+                        pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'HIGH FIVE'
+                        pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'MY LIFE'), ['Marca']] = 'HIGH FIVE'
+
                 if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
-                    pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'MY LIFE'
+                        pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'MY LIFE'
+                        pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'MY LIFE'), ['Marca']] = 'MY LIFE'
                 
                 pdt_final.append(pdt_serie)
                 pdt_full = pd.concat(pdt_final)
