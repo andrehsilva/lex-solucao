@@ -61,8 +61,9 @@ if check_password():
     st.sidebar.image('https://sso.lex.education/assets/images/new-lex-logo.png', width=100)
     st.sidebar.title('Script de solução - Simulador')
 
-
-    page = ['CONEXIA B2B','CONEXIA B2C','SEB','PREMIUM/UNIQUE','EXCEL PARA CSV', 'CSV PARA EXCEL']
+    #  'SEB','PREMIUM/UNIQUE',
+    
+    page = ['CONEXIA B2B','CONEXIA B2C','EXCEL PARA CSV', 'CSV PARA EXCEL']
     choice = st.sidebar.selectbox('Selecione:',page)
 
 
