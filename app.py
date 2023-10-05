@@ -418,8 +418,6 @@ if check_password():
                 return df.to_csv(index=False).encode('UTF-8')
             
             
-            
-            
             col1, col2, col3 = st.columns(3)
             with col1:
                 output = io.BytesIO()
