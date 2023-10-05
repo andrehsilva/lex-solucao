@@ -535,27 +535,8 @@ if check_password():
             #alterar regra conforme leitura das planilhas
             simul = pd.concat([simul0,simul2,simul3,simul4])
             
-            #simul = pd.concat([simul1,simul2,simul3,simul4])
             simul = simul[simul['Quantidade de alunos']>0]
-            
-            #if agree:
-            #    desconto = pd.read_excel(file, sheet_name='Formulário Anual 2024')
-            #    desconto = desconto.iloc[:, :6] 
-            #    desconto = desconto[['FORMULÁRIO DE AQUISIÇÃO DE MATERIAL DIDÁTICO','Unnamed: 5']]
-            #    desconto = desconto.rename(columns={'FORMULÁRIO DE AQUISIÇÃO DE MATERIAL DIDÁTICO':'Série','Unnamed: 5':'% Desconto Extra%'})
-            #
-            #    indice = [25,26,27,28,29,47,48,49,50,51,67,68,69,70,84,85,98,112,113]
-            #    desconto = desconto.iloc[indice]
-
-            #    del(simul['% Desconto Extra'])
-            #    del(simul['% Desconto Total'])
-            #    simul = simul.drop_duplicates()
-            #    
-            #    simul = pd.merge(simul, desconto, on=['Série'], how='inner')
-            #    simul['% Desconto Volume'] = simul['% Desconto Volume'].apply(lambda x: x[:-1])
-            #    simul['% Desconto Volume'] = simul['% Desconto Volume'].astype('float64')/100
-            #    simul['% Desconto Total'] = simul['% Desconto Extra%'] + simul['% Desconto Volume']
-            #    simul = simul.rename(columns={'% Desconto Extra%':'% Desconto Extra'})
+            simul = simul.rename(columns={'% Desconto Extra%':'% Desconto Extra'})
             
             simul = simul.rename(columns={'Construindo a Alfabetização':'Alfabetização','Itinerários Formativos Micro cursos     (2 IF)':'Itinerários',
                                           'H5 - (3 Horas) Language Book + CLIL e PBL ':'H5 - 3 Horas','H5 - (2 horas)\nInternational Journey + \nApp H5':'H5 - 2 horas Journey',
@@ -673,7 +654,7 @@ if check_password():
             pdt['CNPJ_off'] = [x.lstrip('0') for x in pdt['CNPJ_off']]
             pdt['CNPJ_off'] = pdt['CNPJ_off'].astype(float)
             
-            cod_nome = pd.read_excel(planilha, sheet_name='nome')
+            cod_nome = pd.read_excel(planilha, sheet_name='nome_b2c')
             cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
             pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
             
