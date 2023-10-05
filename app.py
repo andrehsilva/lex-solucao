@@ -139,7 +139,7 @@ if check_password():
             
             simul = simul[['Série','Segmento','Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês','% Desconto Volume','Quantidade de alunos','Razão Social','CNPJ','Squad','Tipo','Observação','Grupo de cliente','Bimestre','% Desconto Extra','% Desconto Total']]
             #simul.to_excel('simul.xlsx')
-
+            
             simulador = simul.copy()
             df_cliente = simulador.loc[simulador['CNPJ'] == cliente]
             df_cliente = df_cliente.fillna(0)
@@ -186,8 +186,7 @@ if check_password():
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Ensino Médio','ENSINO MÉDIO')
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('PV','PRÉ VESTIBULAR')
             df_cliente=df_cliente.assign(Extra="")
-          
-
+            
             ###regra do AZ e Plataforma
             df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
             
@@ -366,6 +365,8 @@ if check_password():
             df_brinde_final = df_brinde_final[['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
+            df_brinde_h5 = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('H5')]
+            #df_brinde_h5
             
 
             #### subir nas demais orreções
@@ -458,6 +459,13 @@ if check_password():
                     file_name=f'{today}-{escola}-brinde_import.csv',
                     mime='text/csv'
                 )
+                #df_brinde_h5 = convert_df(df_brinde_h5)
+                #st.download_button(
+                #label="Download do brinde H5 (CSV)",
+                #    data=df_brinde_h5,
+                #    file_name=f'{today}-{escola}-brinde_h5_import.csv',
+                #    mime='text/csv'
+                #)
                
 
             ###### DEBUG COM FILTRO
