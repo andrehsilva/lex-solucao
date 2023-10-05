@@ -217,6 +217,7 @@ if check_password():
             p = p.drop(columns=['index'])
             p = p.drop_duplicates()
             
+            
             itens = pd.read_excel(planilha, sheet_name=sheetname)
             itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
             itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
@@ -344,7 +345,6 @@ if check_password():
             solucao.loc[(solucao['serie_produto'].str.contains('Semi')) , ['periodo_produto']] = 'SEMESTRAL'
 
             solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
-            
             df_brinde = operacao[['CNPJ','SKU','Série','Bimestre','Descrição Magento','Cód Itens','Customer Group']]
             df_brinde_input = pd.read_excel(planilha, sheet_name='brinde')
             df_brinde = pd.merge(df_brinde,df_brinde_input, on=['Cód Itens'], how='inner')
