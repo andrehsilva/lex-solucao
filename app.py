@@ -490,7 +490,7 @@ if check_password():
         today = date.today().strftime('%d-%m-%Y')
         cliente_tipo = 'B2C'
 
-        st.info("Simulador - CONEXIA B2C")
+        st.warning("Simulador - CONEXIA B2C")
         #agree = st.checkbox('Marque para usar o cálculo do script')
         #  29.271.264/0001-61
         cliente = st.text_input('Digite o CNPJ da escola:')
@@ -601,6 +601,7 @@ if check_password():
            
             ###regra do AZ e Plataforma
             df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
+            
             ####
             ####regra do h5
             df_cliente.loc[(df_cliente['H5 Plus'] == 1) & (df_cliente['H5 - 2 horas Journey'] == 1), ['H5 - 2 horas Journey','H5 - 3 Horas']] = 0
@@ -665,6 +666,8 @@ if check_password():
             pdt['Marca'] = pdt['Marca'].str.replace('CONEXIA','SOLUÇÃO')
             pdt['Marca'] = pdt['Marca'].str.replace('HIGH FIVE','SOLUÇÃO')
             pdt['Marca'] = pdt['Marca'].str.replace('AZ B2C','SOLUÇÃO')
+
+            ######NOVAS REGRAS POR SÉRIE#####################################################
             
          
 
@@ -763,7 +766,6 @@ if check_password():
             solucao['sku'] = solucao['sku'].str.replace('SOLUÇÃO','SOLUCAO')
             operacao['SKU'] = operacao['SKU'].str.replace('SOLUÇÃO','SOLUCAO')
 
-            
 
 
             ######## Exibir na tela para conferência #####
