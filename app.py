@@ -88,6 +88,7 @@ if check_password():
         # Carrega o arquivo
         file = st.file_uploader("Selecione um arquivo Excel", type=["xlsm"])
         
+        
         if file is not None:
             simul0 = pd.read_excel(file, sheet_name='cálculos Anual')
             simul0=simul0.assign(Bimestre="ANUAL")
@@ -140,9 +141,11 @@ if check_password():
             simul = simul[['Série','Segmento','Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês','% Desconto Volume','Quantidade de alunos','Razão Social','CNPJ','Squad','Tipo','Observação','Grupo de cliente','Bimestre','% Desconto Extra','% Desconto Total']]
             #simul.to_excel('simul.xlsx')
             
+            
             simulador = simul.copy()
-            df_cliente = simulador.loc[simulador['CNPJ'] == cliente]
+            df_cliente = simulador.loc[simulador['CNPJ'].str.strip() == cliente]
             df_cliente = df_cliente.fillna(0)
+
             df_cliente['Plataforma AZ'] = df_cliente['Plataforma AZ'].where(df_cliente['Plataforma AZ'] == 0, 1)
             df_cliente['Materiais Impressos AZ'] = df_cliente['Materiais Impressos AZ'].where(df_cliente['Materiais Impressos AZ'] == 0, 1)
             df_cliente['Alfabetização'] = df_cliente['Alfabetização'].where(df_cliente['Alfabetização'] == 0, 1)
@@ -217,6 +220,7 @@ if check_password():
             p = p.drop_duplicates()
             
             
+            
             itens = pd.read_excel(planilha, sheet_name=sheetname)
             itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
             itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
@@ -262,6 +266,7 @@ if check_password():
                     pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('ANUAL')))]
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MY LIFE','AZ')
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('CONEXIA','AZ')
+                    pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MUNDO LEITOR','AZ')
                     
                     
 
@@ -552,7 +557,7 @@ if check_password():
             simul = simul[['Série','Segmento','Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês','% Desconto Volume','Quantidade de alunos','Razão Social','CNPJ','Squad','Tipo','Grupo de cliente','Bimestre','% Desconto Total','Valor de venda (B2C)']]
             
             simulador = simul.copy()
-            df_cliente = simulador.loc[simulador['CNPJ'] == cliente]
+            df_cliente = simulador.loc[simulador['CNPJ'].str.strip() == cliente]
             df_cliente = df_cliente.fillna(0)
             df_cliente['Plataforma AZ'] = df_cliente['Plataforma AZ'].where(df_cliente['Plataforma AZ'] == 0, 1)
             df_cliente['Materiais Impressos AZ'] = df_cliente['Materiais Impressos AZ'].where(df_cliente['Materiais Impressos AZ'] == 0, 1)
@@ -911,7 +916,7 @@ if check_password():
                 #simul.to_excel('simul.xlsx')
 
                 simulador = simul.copy()
-                df_cliente = simulador.loc[simulador['CNPJ'] == cliente]
+                df_cliente = simulador.loc[simulador['CNPJ'].str.strip() == cliente]
                 df_cliente = df_cliente.fillna(0)
                 df_cliente['Plataforma AZ'] = df_cliente['Plataforma AZ'].where(df_cliente['Plataforma AZ'] == 0, 1)
                 df_cliente['Materiais Impressos AZ'] = df_cliente['Materiais Impressos AZ'].where(df_cliente['Materiais Impressos AZ'] == 0, 1)
