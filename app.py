@@ -382,6 +382,7 @@ if check_password():
             escola = operacao['Escola'].unique()[0]
             df_brinde_h5 = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('H5')]
             #df_brinde_h5
+            df_brinde_final2 = df_brinde_final.copy()
             
 
             #### subir nas demais orreções
@@ -473,6 +474,16 @@ if check_password():
                     data=df_brinde_final,
                     file_name=f'{today}-{escola}-brinde_import.csv',
                     mime='text/csv'
+                )
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    df_brinde_final2.to_excel(writer, index=False, sheet_name='Sheet1')
+                # Configurar os parâmetros para o botão de download
+                st.download_button(
+                    label="Download do brinde (XLSX)",
+                    data=output.getvalue(),
+                    file_name=f'{today}-{escola}-brinde.xlsx',
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
                 #df_brinde_h5 = convert_df(df_brinde_h5)
                 #st.download_button(
