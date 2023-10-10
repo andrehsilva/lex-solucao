@@ -688,9 +688,9 @@ if check_password():
 
             pdt['Nome'] = pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
             pdt['Marca'] = pdt['Marca'].str.replace('AZ B2C','AZ')
-            pdt['SKU'] = pdt['Escola'] + pdt['Marca'] + "B2C2024" + pdt['Serial']
+            pdt['SKU'] = pdt['Escola'] + "2024" + pdt['Serial']
             pdt['SKU'] = pdt['SKU'].str.replace(' ','')
-        
+            
             
             operacoes = pdt[['Escola','CNPJ','Ano','Marca','Serial','Segmento','Série','Bimestre','Público','SKU','Nome',2024,'2024+','Descrição Magento','Quantidade de alunos','Valor de venda (B2C)','% Desconto Total','Customer Group','Squad']]
             operacoes = operacoes.rename(columns = {2024:'Cód Itens'} )
@@ -824,7 +824,6 @@ if check_password():
                         file_name=f'{today}-{escola}-solucao.xlsx',
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
-            with col3:
                     solucao = convert_df(solucao)
                     st.download_button(
                     label="Download Solução (CSV)",
@@ -832,6 +831,8 @@ if check_password():
                         file_name=f'{today}-{escola}-solucao_import.csv',
                         mime='text/csv'
                     )
+            #with col3:
+                    
                     
                     
             
