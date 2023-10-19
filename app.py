@@ -194,7 +194,7 @@ if check_password():
             ####regra do h5
             df_cliente.loc[(df_cliente['H5 Plus'] == 1) & (df_cliente['H5 - 2 horas Journey'] == 1), ['H5 - 2 horas Journey','H5 - 3 Horas']] = 0
             df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
-          
+            
 
             ####
             df_client = df_cliente.copy()
@@ -216,7 +216,6 @@ if check_password():
             p = p.reset_index()
             p = p.drop(columns=['index'])
             p = p.drop_duplicates()
-            
             
             
             itens = pd.read_excel(planilha, sheet_name=sheetname)
