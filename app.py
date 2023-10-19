@@ -72,8 +72,6 @@ if check_password():
 ##########################################################################################################################################################
 
 
-
-
     if choice == 'CONEXIA B2B':
         
         marca = 'AZ' ## ou AZ SESC B2B ou AZ/SESC
@@ -106,7 +104,6 @@ if check_password():
             simul3 = pd.read_excel(file, sheet_name='cálculos 3º Bim')
             simul3=simul3.assign(Bimestre="3º BIMESTRE")
             simul3.replace(0, np.nan, inplace = True)
-            
 
             simul4 = pd.read_excel(file, sheet_name='cálculos 4º Bim')
             simul4=simul4.assign(Bimestre="4º BIMESTRE")
@@ -887,7 +884,7 @@ if check_password():
     if choice == 'SEB':
             
             marca = 'AZ' ## ou AZ SESC B2B ou AZ/SESC
-            sheetname = 'itens'
+            sheetname = 'itens_performance'
             planilha = 'itens.xlsx'
             today = date.today().strftime('%d-%m-%Y')
             cliente_tipo = 'B2B'
@@ -1062,40 +1059,21 @@ if check_password():
                 
                 serie = pdt['Série'].unique()
                 pdt_final = []
+                pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('BIMESTRE')))]
                 for i in serie:
                     pdt_serie = pdt.loc[pdt['Série'] == i]
-
-                    ######Regras
-
-                    #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
-                    #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
-
-                    if (pdt_serie['Marca'].str.contains('AZ').any()):
-                        pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
-                        pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'AZ') & (pdt_serie['Bimestre'].str.contains('ANUAL')))]
-                        #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
-                        #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('ANUAL')))]
-                        #pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MY LIFE','AZ')
-                        pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MUNDO LEITOR','AZ')                     
+                    pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MUNDO LEITOR','AZ')                     
                     
                     if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
                             pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
-
-                    #if (pdt_serie['Marca'].str.contains('HIGH FIVE').any()):
-                    #    pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'HIGH FIVE'
-                    #    if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
-                    #        pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'HIGH FIVE'
-                    #        pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'MY LIFE'), ['Marca']] = 'HIGH FIVE'
-
-                    #if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
-                    #        pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'CONEXIA'), ['Marca']] = 'MY LIFE'
-                    #        pdt_serie.loc[(pdt_serie['Bimestre'] == 'ANUAL') & (pdt_serie['Marca'] == 'MY LIFE'), ['Marca']] = 'MY LIFE'
                     
                     pdt_final.append(pdt_serie)
                     pdt_full = pd.concat(pdt_final)
 
                 #pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
                 pdt = pdt_full.copy()
+                pdt.loc[pdt['Marca'] == 'MY LIFE', ['Marca']] = 'CONEXIA'
+                pdt.loc[pdt['Marca'] == 'HIGH FIVE', ['Marca']] = 'CONEXIA'
 
                 ######End Regra   
             
@@ -1340,168 +1318,173 @@ if check_password():
                 ##################
 
 
-#############################################################################################################################################################
+##########################################################################################################################################################
+##########################################################################################################################################################
 
     if choice == 'EXCEL PARA CSV':
         excel_csv()
 
+##########################################################################################################################################################
+##########################################################################################################################################################
+
     if choice == 'CSV PARA EXCEL':
         csv_excel()
 
-
+##########################################################################################################################################################
+##########################################################################################################################################################
 
     if choice == 'PEDIDO PROGRAMADO':
         today = date.today().strftime('%d-%m-%Y')
         st.info("Pedido Programado")
 
         file = st.file_uploader("Selecione um arquivo Excel para gerar o pedido programado", type=["xlsx"])
+        if file:
+            df = pd.read_excel(file)
 
-        df = pd.read_excel(file)
+            df['SKU_SCHOOL'] = df['SKU']
+            df['SKU'] =  df['SKU'] +','
 
-        df['SKU_SCHOOL'] = df['SKU']
-        df['SKU'] =  df['SKU'] +','
+            df['DESCRIÇÃO'] = df['DESCRIÇÃO MAGENTO']
+            df.sort_values('DESCRIÇÃO MAGENTO', ascending=False)
 
-        df['DESCRIÇÃO'] = df['DESCRIÇÃO MAGENTO']
-        df.sort_values('DESCRIÇÃO MAGENTO', ascending=False)
+            df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - 1º BIMESTRE','')
+            df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - 2º BIMESTRE','')
+            df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - 3º BIMESTRE','')
+            df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - 4º BIMESTRE','')
+            df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - ANUAL','')
 
-        df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - 1º BIMESTRE','')
-        df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - 2º BIMESTRE','')
-        df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - 3º BIMESTRE','')
-        df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - 4º BIMESTRE','')
-        df['DESCRIÇÃO'] = df['DESCRIÇÃO'].str.replace(' - ANUAL','')
-        
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4AL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5AL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5AL3B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5AL4B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EXTI4ALA','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EXTPAL1B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EXTPAL2B','')
-        df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EXTPAL3B','')
-        
-        
-        df = df.groupby(['SÉRIE','SKU_SCHOOL','DESCRIÇÃO'])['SKU'].sum().reset_index()
-        df['SKU'] = df['SKU'].apply(lambda x: x[:-1])
-        df['enabled'] = 1
-        df = df.rename(columns={'SKU':'sku','DESCRIÇÃO':'title'})
-        df = df[['title','enabled','sku']]
-        df['title'] = df['title'] + ' - ANUAL'
-        
-        
-        
-        df
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4AL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('SEMI4AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5AL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5AL3B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5AL4B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF1ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF2ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF3ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF4ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('INF5ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND11ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND12ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND13ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND14ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND15ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND26ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND27ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND28ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('FUND29ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM1ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM2ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EM3ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EXTI4ALA','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EXTPAL1B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EXTPAL2B','')
+            df['SKU_SCHOOL'] = df['SKU_SCHOOL'].str.replace('EXTPAL3B','')
 
-        st.divider()
 
-        with st.spinner('Aguarde...'):
-            time.sleep(3)
-        st.success('Concluído com sucesso!', icon="✅")
-        def convert_df(df):
-            # IMPORTANT: Cache the conversion to prevent computation on every rerun
-            return df.to_csv(index=False).encode('UTF-8')
+            df = df.groupby(['SÉRIE','SKU_SCHOOL','DESCRIÇÃO'])['SKU'].sum().reset_index()
+            df['SKU'] = df['SKU'].apply(lambda x: x[:-1])
+            df['enabled'] = 1
+            df = df.rename(columns={'SKU':'sku','DESCRIÇÃO':'title'})
+            df = df[['title','enabled','sku']]
+            df['title'] = df['title'] + ' - ANUAL'
 
-      
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            df.to_excel(writer, index=False, sheet_name='Sheet1')
-        # Configurar os parâmetros para o botão de download
-        st.download_button(
-            label="Pedido Programado (XLSX)",
-            data=output.getvalue(),
-            file_name=f'{today}-pedidoprogramado.xlsx',
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-        df = convert_df(df)
-        st.download_button(
-        label="Download Pedido Programado (CSV) ",
-            data=df,
-            file_name=f'{today}-pedidoprogramado.csv',
-            mime='text/csv'
-        )
-        
+            df
+
+            with st.spinner('Aguarde...'):
+                time.sleep(3)
+            st.success('Concluído com sucesso!', icon="✅")
+
+            st.divider()
+            def convert_df(df):
+                # IMPORTANT: Cache the conversion to prevent computation on every rerun
+                return df.to_csv(index=False).encode('UTF-8')
+
+
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df.to_excel(writer, index=False, sheet_name='Sheet1')
+            # Configurar os parâmetros para o botão de download
+            st.download_button(
+                label="Pedido Programado (XLSX)",
+                data=output.getvalue(),
+                file_name=f'{today}-pedidoprogramado.xlsx',
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+            df = convert_df(df)
+            st.download_button(
+            label="Download Pedido Programado (CSV) ",
+                data=df,
+                file_name=f'{today}-pedidoprogramado.csv',
+                mime='text/csv'
+            )
+
+##########################################################################################################################################################
+##########################################################################################################################################################
