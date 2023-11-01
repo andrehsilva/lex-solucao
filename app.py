@@ -1409,14 +1409,290 @@ if check_password():
             p = p.reset_index()
             p = p.drop(columns=['index'])
             p = p.drop_duplicates()
-            p
+            
+            itens = pd.read_excel(planilha, sheet_name=sheetname)
+            itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
+            itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
+            itens = itens[(itens['Marca'] == marca) | (itens['Marca'] == 'CONEXIA') | (itens['Marca'] == 'MUNDO LEITOR') | (itens['Marca'] == 'MY LIFE')| (itens['Marca'] == 'HIGH FIVE')]
+            
+            pdt = pd.merge(p, itens, on=['Série','Bimestre','Segmento','Produto'], how='inner')
+                
+            cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
+            
+            pdt = pd.merge(pdt, cod_serial, on=['Série','Bimestre','Segmento','Público'], how='inner')
+            pdt['Ano'] = '2024'
+            pdt['SKU'] = pdt['Ano'] + pdt['Serial']
+            pdt = pdt[['Série','Segmento','% Desconto Volume','% Desconto Extra','% Desconto Total','Quantidade de alunos','Razão Social','CNPJ','Bimestre','Squad','Tipo','Extra','Produto','Marca',2024,'2024+','Descrição Magento','Público','Faturamento','Serial','Categoria','Ano','SKU']]
+            
+            h = re.compile(r'[../\-]')
+            pdt['CNPJ_off'] = [h.sub('', x) for x in pdt['CNPJ']]
+            pdt['CNPJ_off'] = [x.lstrip('0') for x in pdt['CNPJ_off']]
+            pdt['CNPJ_off'] = pdt['CNPJ_off'].astype(float)
+            
+            cod_nome = pd.read_excel(planilha, sheet_name='nome')
+            cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
+            pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
+            ####################################################################################################
+            ######NOVAS REGRAS POR SÉRIE#####################################################
+            
+            serie = pdt['Série'].unique()
+            pdt_final = []
+            pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('BIMESTRE')))]
+            for i in serie:
+                pdt_serie = pdt.loc[pdt['Série'] == i]
+                pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MUNDO LEITOR','AZ')                     
+                
+                if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
+                        pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
+                
+                pdt_final.append(pdt_serie)
+                pdt_full = pd.concat(pdt_final)
+            #pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
+            pdt = pdt_full.copy()
+            pdt.loc[pdt['Marca'] == 'MY LIFE', ['Marca']] = 'CONEXIA'
+            pdt.loc[pdt['Marca'] == 'HIGH FIVE', ['Marca']] = 'CONEXIA'
+            ######End Regra   
+        
+            pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
+            pdt['SKU'] = pdt['Escola'] + '2024' + pdt['Marca'] + pdt['Serial']
+            pdt['SKU'] = pdt['SKU'].str.replace(' ','')
+            pdt = pdt.drop_duplicates()
+            
+            operacoes = pdt[['Escola','CNPJ','Ano','Marca','Serial','Segmento','Série','Bimestre','Público','SKU','Nome',2024,'2024+','Descrição Magento','Quantidade de alunos','% Desconto Volume','% Desconto Extra','% Desconto Total','Customer Group','Squad']]
+            operacoes = operacoes.rename(columns = {2024:'Cód Itens'} )
+            solucao = operacoes.copy()
+            operacao = operacoes.copy()
+            operacao = operacao[['Escola','CNPJ','Ano','Marca','Serial','Segmento','Série','Bimestre','Público','SKU','Nome','Cód Itens','Descrição Magento','Quantidade de alunos','% Desconto Volume','% Desconto Extra','% Desconto Total','Customer Group','Squad']]
+            #operacao.to_excel('operacao.xlsx')
+            operacao = operacao.sort_values(by=['Série','Bimestre'])
+            
+                
+            solucao = solucao.groupby(['Escola','CNPJ','Série','Bimestre','Marca','Segmento','Ano','Público','Serial','SKU','Nome','Customer Group','Squad'])['2024+'].sum().reset_index()
+            solucao['visibilidade'] = 'N'
+            solucao['faturamento_produto'] = 'MATERIAL'
+            solucao['cliente_produto'] = cliente_tipo
+            solucao['ativar_restricao'] = 'S'
+            #solucao.to_csv('teste_solução.csv')
+            #solucao
+            categoria = pd.read_excel(planilha, sheet_name='categoriab2b')
+            solucao = pd.merge(solucao,categoria, on=['Série'], how='inner')
+            #solucao
+            solucao['Categorias'] = solucao['Marca'] + '/' + solucao['Categorias']
+            solucao = solucao.sort_values(by=['Bimestre','Série'], ascending=True)
+            solucao = solucao.rename(columns={'Público':'grupo_de_atributo','Marca':'marca_produto', 'Nome':'nome', 'SKU':'sku', 'Ano':'ano_produto', 'Série':'serie_produto', 'Bimestre':'utilizacao_produto', 'Categorias':'categorias', '2024+':'items', 'Customer Group':'grupos_permissao'})
+            solucao['items'] = solucao['items'].apply(lambda x: x[:-1])
+            solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','serie_produto','utilizacao_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
+            
+            solucao['nome'] = solucao['nome'].str.replace('INFANTIL','EI')
+            solucao['nome'] = solucao['nome'].str.replace('FUNDAMENTAL ANOS INICIAIS','EFI')
+            solucao['nome'] = solucao['nome'].str.replace('FUNDAMENTAL ANOS FINAIS','EFII')
+            solucao['nome'] = solucao['nome'].str.replace('ENSINO MÉDIO','EM')
+            operacao['Nome'] = operacao['Nome'].str.replace('INFANTIL','EI')
+            operacao['Nome'] = operacao['Nome'].str.replace('FUNDAMENTAL ANOS INICIAIS','EFI')
+            operacao['Nome'] = operacao['Nome'].str.replace('FUNDAMENTAL ANOS FINAIS','EFII')
+            operacao['Nome'] = operacao['Nome'].str.replace('ENSINO MÉDIO','EM')
+            
+            
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('°','º')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Grupo 1','1 ANO')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Grupo 2','2 ANOS')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Grupo 3','3 ANOS')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Grupo 4','4 ANOS')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Grupo 5','5 ANOS')
+            
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('série','SÉRIE')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('ano','ANO')
+            solucao['nome'] = solucao['nome'].str.replace('°','º')
+            solucao['publico_produto'] = 'ALUNO'
+            
+            solucao.loc[(solucao['nome'].str.contains('BIMESTRE')) , ['periodo_produto']] = 'BIMESTRAL'
+            solucao.loc[(solucao['nome'].str.contains('ANUAL')) , ['periodo_produto']] = 'ANUAL'
+            solucao.loc[(solucao['nome'].str.contains('SEMESTRAL')) , ['periodo_produto']] = 'SEMESTRAL'
+            solucao.loc[(solucao['serie_produto'].str.contains('Semi')) , ['periodo_produto']] = 'SEMESTRAL'
+            solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
+            df_brinde = operacao[['CNPJ','SKU','Série','Bimestre','Descrição Magento','Cód Itens','Customer Group']]
+            df_brinde_input = pd.read_excel(planilha, sheet_name='brinde')
+            df_brinde = pd.merge(df_brinde,df_brinde_input, on=['Cód Itens'], how='inner')
+            df_brinde_final = df_brinde.copy()
+            df_brinde_final = df_brinde_final[['Série_x','Nome da Regra','Customer Group','SKU_x','SKU_y']]
+            df_brinde_final['Status'] = 'ATIVO'
+            df_brinde_infantil = df_brinde_final.loc[df_brinde_final['Série_x'].str.contains('Grupo')]
+            df_brinde_infantil['Qtd Incremento'] = 11
+            df_brinde_demais = df_brinde_final.loc[~df_brinde_final['Série_x'].str.contains('Grupo')]
+            df_brinde_demais['Qtd Incremento'] = 20
+            df_brinde_final = pd.concat([df_brinde_infantil,df_brinde_demais])
+            df_brinde_final['Qtd Condicao'] = 1
+            df_brinde_final = df_brinde_final.rename(columns={'Customer Group':'Grupo do Cliente','SKU_x':'Sku Condicao','SKU_y':'Sku Brinde'})
+            df_brinde_final = df_brinde_final[['Nome da Regra','Status','Grupo do Cliente','Sku Condicao','Qtd Condicao','Sku Brinde','Qtd Incremento']]
+            df_brinde_final = df_brinde_final.rename(columns= {'Nome da Regra':'nome_da_regra','Status':'status','Grupo do Cliente':'grupo_do_cliente','Sku Condicao':'sku_condicao','Qtd Condicao':'qtd_condicao','Sku Brinde':'sku_brinde','Qtd Incremento':'qtd_incremento'})
+            df_brinde_final = df_brinde_final.sort_values(by=['grupo_do_cliente','nome_da_regra'])
+            df_brinde_final['id'] = ''
+            df_brinde_final = df_brinde_final[['id','nome_da_regra','status','grupo_do_cliente','sku_condicao','qtd_condicao','sku_brinde','qtd_incremento']]
+            ######## Exibir na tela para conferência #####
+            escola = operacao['Escola'].unique()[0]
+            df_brinde_h5 = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('H5')]
+            #df_brinde_h5
+            df_brinde_final2 = df_brinde_final.copy()
 
- 
-##########################################################################################################################################################
-##########################################################################################################################################################
+            #### subir nas demais orreções
+            solucao['nome'] = solucao['nome'].str.replace('Grupo 1','1 ANO')
+            solucao['nome'] = solucao['nome'].str.replace('Grupo 2','2 ANOS')
+            solucao['nome'] = solucao['nome'].str.replace('Grupo 3','3 ANOS')
+            solucao['nome'] = solucao['nome'].str.replace('Grupo 4','4 ANOS')
+            solucao['nome'] = solucao['nome'].str.replace('Grupo 5','5 ANOS')
+            solucao['nome'] = solucao['nome'].str.replace('série','SÉRIE')
+            solucao['nome'] = solucao['nome'].str.replace('ano','ANO')
+            operacao['Nome'] = operacao['Nome'].str.replace('Grupo 1','1 ANO')
+            operacao['Nome'] = operacao['Nome'].str.replace('Grupo 2','2 ANOS')
+            operacao['Nome'] = operacao['Nome'].str.replace('Grupo 3','3 ANOS')
+            operacao['Nome'] = operacao['Nome'].str.replace('Grupo 4','4 ANOS')
+            operacao['Nome'] = operacao['Nome'].str.replace('Grupo 5','5 ANOS')
+            operacao['Nome'] = operacao['Nome'].str.replace('série','SÉRIE')
+            operacao['Nome'] = operacao['Nome'].str.replace('ano','ANO')
+            operacao['Série'] = operacao['Série'].str.replace('°','º')
+            operacao['Série'] = operacao['Série'].str.replace('Grupo 1','1 ANO')
+            operacao['Série'] = operacao['Série'].str.replace('Grupo 2','2 ANOS')
+            operacao['Série'] = operacao['Série'].str.replace('Grupo 3','3 ANOS')
+            operacao['Série'] = operacao['Série'].str.replace('Grupo 4','4 ANOS')
+            operacao['Série'] = operacao['Série'].str.replace('Grupo 5','5 ANOS')
+            operacao['Série'] = operacao['Série'].str.replace('ano','ANO')
+            operacao['Série'] = operacao['Série'].str.replace('série','SÉRIE')
+            operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS INICIAIS','FUNDAMENTAL I')
+            operacao['Segmento'] = operacao['Segmento'].str.replace('FUNDAMENTAL ANOS FINAIS','FUNDAMENTAL II')
+            operacao['Nome'] = operacao['Nome'].str.replace('Extensivo','EXTENSIVO')
+            operacao['Nome'] = operacao['Nome'].str.replace('Semi','SEMI')
+            operacao['Série'] = operacao['Série'].str.replace('Extensivo','PRE VESTIBULAR')
+            operacao['Série'] = operacao['Série'].str.replace('Semi','SEMI EXTENSIVO II')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Extensivo','PRE VESTIBULAR')
+            solucao['serie_produto'] = solucao['serie_produto'].str.replace('Semi','SEMI EXTENSIVO II')
+            solucao['nome'] = solucao['nome'].str.replace('Extensivo','EXTENSIVO')
+            solucao['nome'] = solucao['nome'].str.replace('Semi','SEMI')
+            ope3bim = operacao.loc[operacao['Bimestre'] == '3º BIMESTRE']
+            #ope3bim
+            sol3bim = solucao.loc[solucao['utilizacao_produto'] == '3º BIMESTRE']
+            #sol3bim
+            brinde3bim = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('3º BIMESTRE')]
+            #brinde3bim
+            
+            #operacao
+            st.divider()
+            with st.spinner('Aguarde...'):
+                time.sleep(3)
+            st.success('Concluído com sucesso!', icon="✅")
+            def convert_df(df):
+                # IMPORTANT: Cache the conversion to prevent computation on every rerun
+                return df.to_csv(index=False).encode('UTF-8')
+            
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    operacao.to_excel(writer, index=False, sheet_name='Sheet1')
+                    # Configurar os parâmetros para o botão de download
+                st.download_button(
+                        label="Download do cadastro (XLSX)",
+                    data=output.getvalue(),
+                    file_name=f'{today}-{escola}-operacao.xlsx',
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+                #output = io.BytesIO()
+                #with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                #    ope3bim.to_excel(writer, index=False, sheet_name='Sheet1')
+                #    # Configurar os parâmetros para o botão de download
+                #st.download_button(
+                #        label="Download do cadastro 3º Bimestre (XLSX)",
+                #    data=output.getvalue(),
+                #    file_name=f'{today}-{escola}-3bim.xlsx',
+                #    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                #)
+                
+            with col2:
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    solucao.to_excel(writer, index=False, sheet_name='Sheet1')
+                # Configurar os parâmetros para o botão de download
+                st.download_button(
+                    label="Download Solução (XLSX)",
+                    data=output.getvalue(),
+                    file_name=f'{today}-{escola}-solucao.xlsx',
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+                solucao = convert_df(solucao)
+                st.download_button(
+                label="Download Solução (CSV) ",
+                    data=solucao,
+                    file_name=f'{today}-{escola}-solucao_import.csv',
+                    mime='text/csv'
+                )
+                #sol3bim = convert_df(sol3bim)
+                #st.download_button(
+                #label="Download Solução 3º Bimestre (CSV)",
+                #    data=sol3bim,
+                #    file_name=f'{today}-{escola}-solucao_import_3bim.csv',
+                #    mime='text/csv'
+                #)
+                    
+            with col3:
+                df_brinde_final = convert_df(df_brinde_final)
+                st.download_button(
+                label="Download do brinde (CSV)",
+                    data=df_brinde_final,
+                    file_name=f'{today}-{escola}-brinde_import.csv',
+                    mime='text/csv'
+                )
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    df_brinde_final2.to_excel(writer, index=False, sheet_name='Sheet1')
+                # Configurar os parâmetros para o botão de download
+                st.download_button(
+                    label="Download do brinde (XLSX)",
+                    data=output.getvalue(),
+                    file_name=f'{today}-{escola}-brinde.xlsx',
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+                #df_brinde_h5 = convert_df(df_brinde_h5)
+                #st.download_button(
+                #label="Download do brinde H5 (CSV)",
+                #    data=df_brinde_h5,
+                #    file_name=f'{today}-{escola}-brinde_h5_import.csv',
+                #    mime='text/csv'
+                #)
+                #brinde3bim = convert_df(brinde3bim)
+                #st.download_button(
+                #label="Download Brinde 3º Bimestre (CSV)",
+                #    data=brinde3bim,
+                #    file_name=f'{today}-{escola}-brinde_import_3bimes.csv',
+                #    mime='text/csv'
+                #)
+            
+            ###### DEBUG COM FILTRO
+            st.divider()
+            st.write("Cliente:", escola)
+            st.divider()
+            st.write('Resultado:')
+            filter = operacao[['Escola','Marca','Segmento','Série','Bimestre','Nome','Descrição Magento','Quantidade de alunos','Customer Group']]
+            selected = st.selectbox('Selecione a série:', ['',*filter['Série'].unique()])
+            if selected:
+                selected_serie = filter[filter['Série'] == selected]
+                selected_serie
+            else:
+                filter
+                ##################
+
+
+            
+################°#########################################################################################################################################
+################°##########################################################################################################################################
 
     if choice == 'CSV PARA EXCEL':
         csv_excel()
+
+##########################################################################################################################################################
+##########################################################################################################################################################
+
+    if choice == 'EXCEL PARA CSV':
+        excel_csv()
 
 ##########################################################################################################################################################
 ##########################################################################################################################################################
