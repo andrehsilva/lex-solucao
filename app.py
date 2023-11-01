@@ -64,7 +64,7 @@ if check_password():
 
     #  'SEB','PREMIUM/UNIQUE',
     
-    page = ['CONEXIA B2B','CONEXIA B2C','SEB','EXCEL PARA CSV', 'CSV PARA EXCEL','PEDIDO PROGRAMADO']
+    page = ['CONEXIA B2B','CONEXIA B2C','SEB','PREMIUM-UNIQUE','EXCEL PARA CSV','CSV PARA EXCEL','PEDIDO PROGRAMADO']
     choice = st.sidebar.selectbox('Selecione:',page)
 
 
@@ -540,8 +540,6 @@ if check_password():
 ##########################################################################################################################################################
 
 
-
-
     if choice == 'CONEXIA B2C':
         marca = 'AZ B2C'
         planilha = 'itens.xlsx'
@@ -873,7 +871,6 @@ if check_password():
                 selected_serie
             else:
                 filter
-
 
 
 ##########################################################################################################################################################
@@ -1320,9 +1317,101 @@ if check_password():
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
-    if choice == 'EXCEL PARA CSV':
-        excel_csv()
+    if choice == 'PREMIUM-UNIQUE':
+        marca = 'AZ' ## ou AZ SESC B2B ou AZ/SESC
+        sheetname = 'itens_performance'
+        planilha = 'itens.xlsx'
+        today = date.today().strftime('%d-%m-%Y')
+        cliente_tipo = 'B2B'
 
+        st.success("Simulador - SEB")
+        cliente = st.text_input('Digite o CNPJ da escola:')
+        file = st.file_uploader("Selecione um arquivo Excel", type=["xlsm"])
+
+        if file is not None:
+            simul = pd.read_excel(file, sheet_name='cálculos Anual')
+            simul=simul.assign(Bimestre="ANUAL")
+            simul.replace(0, np.nan, inplace = True)
+
+            simul = simul[simul['Quantidade de alunos']>0]
+
+            simul = simul.rename(columns={'Construindo a Alfabetização':'Alfabetização','Itinerários Formativos Micro cursos     (2 IF)':'Itinerários','H5 - (3 Horas) Language Book + CLIL e PBL ':'H5 - 3 Horas','H5 - (2 horas)\nInternational Journey + \nApp H5':'H5 - 2 horas Journey','H5 Plus\n (3 horas extras)':'H5 Plus','My Life\n(Base)':'My Life - Base','My Life\n(2024)':'My Life - 2024','Binoculo By Tell Me\n(Base)':'Binoculo - Base','Educacross Ed. Infantil\n(Base)':'Educacross Infantil - Base','Educacross\n(Base)':'Educacross - Base','Educacross AZ\n(Base)':'Educacross AZ - Base','Educacross H5\n(Base)':'Educacross H5 - Base','Ubbu\n(Base)':'Ubbu - Base','Binoculo By Tell Me\n(2024)':'Binoculo - 2024','Educacross Ed. Infantil\n(2024)':'Educacross Infantil - 2024','Educacross\n(2024)':'Educacross - 2024','Educacross AZ\n(2024)':'Educacross AZ - 2024','Educacross H5\n(2024)':'Educacross H5 - 2024','Ubbu\n(2024)':'Ubbu - 2024','Árvore\n(1 Módulo)':'Árvore 1 Módulo','Árvore\n(2 Módulos)':'Árvore 2 Módulos','Árvore\n(3 Módulos)':'Árvore 3 Módulos','total aluno/ano\nsem desconto':'total aluno sem desconto','total aluno/ano\ncom desconto sem complementar':'total aluno com desconto sem complementar','total aluno/ano\ncom desconto + Complementares':'total aluno com desconto com Complementares',})
+                
+            simul = simul[['Série','Segmento','Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Unique','% Desconto Volume','Quantidade de alunos','Razão Social','CNPJ','Squad','Tipo','Observação','Grupo de cliente','Bimestre','% Desconto Extra','% Desconto Total']]
+            simulador = simul.copy()
+            df_cliente = simulador.loc[simulador['CNPJ'].str.strip() == cliente]
+            df_cliente = df_cliente.fillna(0)
+
+            df_cliente['Plataforma AZ'] = df_cliente['Plataforma AZ'].where(df_cliente['Plataforma AZ'] == 0, 1)
+            df_cliente['Materiais Impressos AZ'] = df_cliente['Materiais Impressos AZ'].where(df_cliente['Materiais Impressos AZ'] == 0, 1)
+            df_cliente['Alfabetização'] = df_cliente['Alfabetização'].where(df_cliente['Alfabetização'] == 0, 1)
+            df_cliente['Cantalelê'] = df_cliente['Cantalelê'].where(df_cliente['Cantalelê'] == 0, 1)
+            df_cliente['Mundo Leitor'] = df_cliente['Mundo Leitor'].where(df_cliente['Mundo Leitor'] == 0, 1)
+            df_cliente['4 Avaliações Nacionais'] = df_cliente['4 Avaliações Nacionais'].where(df_cliente['4 Avaliações Nacionais'] == 0, 1)
+            df_cliente['1 Simulado ENEM'] = df_cliente['1 Simulado ENEM'].where(df_cliente['1 Simulado ENEM'] == 0, 1)
+            df_cliente['5 Simulados ENEM'] = df_cliente['5 Simulados ENEM'].where(df_cliente['5 Simulados ENEM'] == 0, 1)
+            df_cliente['1 Simulado Regional'] = df_cliente['1 Simulado Regional'].where(df_cliente['1 Simulado Regional'] == 0, 1)
+            df_cliente['Itinerários'] = df_cliente['Itinerários'].where(df_cliente['Itinerários'] == 0, 1)
+            df_cliente['H5 - 3 Horas'] = df_cliente['H5 - 3 Horas'].where(df_cliente['H5 - 3 Horas'] == 0, 1)
+            df_cliente['H5 - 2 horas Journey'] = df_cliente['H5 - 2 horas Journey'].where(df_cliente['H5 - 2 horas Journey'] == 0, 1)
+            df_cliente['H5 Plus'] = df_cliente['H5 Plus'].where(df_cliente['H5 Plus'] == 0, 1)
+            df_cliente['My Life - Base'] = df_cliente['My Life - Base'].where(df_cliente['My Life - Base'] == 0, 1)
+            df_cliente['My Life - 2024'] = df_cliente['My Life - 2024'].where(df_cliente['My Life - 2024'] == 0, 1)
+            df_cliente['Binoculo - Base'] = df_cliente['Binoculo - Base'].where(df_cliente['Binoculo - Base'] == 0, 1)
+            df_cliente['Educacross Infantil - Base'] = df_cliente['Educacross Infantil - Base'].where(df_cliente['Educacross Infantil - Base'] == 0, 1)
+            df_cliente['Educacross - Base'] = df_cliente['Educacross - Base'].where(df_cliente['Educacross - Base'] == 0, 1)
+            df_cliente['Educacross AZ - Base'] = df_cliente['Educacross AZ - Base'].where(df_cliente['Educacross AZ - Base'] == 0, 1)
+            df_cliente['Educacross H5 - Base'] = df_cliente['Educacross H5 - Base'].where(df_cliente['Educacross H5 - Base'] == 0, 1)
+            df_cliente['Ubbu - Base'] = df_cliente['Ubbu - Base'].where(df_cliente['Ubbu - Base'] == 0, 1)
+            df_cliente['Binoculo - 2024'] = df_cliente['Binoculo - 2024'].where(df_cliente['Binoculo - 2024'] == 0, 1)
+            df_cliente['Educacross Infantil - 2024'] = df_cliente['Educacross Infantil - 2024'].where(df_cliente['Educacross Infantil - 2024'] == 0, 1)
+            df_cliente['Educacross - 2024'] = df_cliente['Educacross - 2024'].where(df_cliente['Educacross - 2024'] == 0, 1)
+            df_cliente['Educacross AZ - 2024'] = df_cliente['Educacross AZ - 2024'].where(df_cliente['Educacross AZ - 2024'] == 0, 1)
+            df_cliente['Educacross H5 - 2024'] = df_cliente['Educacross H5 - 2024'].where(df_cliente['Educacross H5 - 2024'] == 0, 1)
+            df_cliente['Ubbu - 2024'] = df_cliente['Ubbu - 2024'].where(df_cliente['Ubbu - 2024'] == 0, 1)
+            df_cliente['Árvore 1 Módulo'] = df_cliente['Árvore 1 Módulo'].where(df_cliente['Árvore 1 Módulo'] == 0, 1)
+            df_cliente['Árvore 2 Módulos'] = df_cliente['Árvore 2 Módulos'].where(df_cliente['Árvore 2 Módulos'] == 0, 1)
+            df_cliente['Árvore 3 Módulos'] = df_cliente['Árvore 3 Módulos'].where(df_cliente['Árvore 3 Módulos'] == 0, 1)
+            df_cliente['School Guardian'] = df_cliente['School Guardian'].where(df_cliente['School Guardian'] == 0, 1)
+            df_cliente['Tindin'] = df_cliente['Tindin'].where(df_cliente['Tindin'] == 0, 1)
+            df_cliente['Scholastic Earlybird and Bookflix'] = df_cliente['Scholastic Earlybird and Bookflix'].where(df_cliente['Scholastic Earlybird and Bookflix'] == 0, 1)
+            df_cliente['Scholastic Literacy Pro'] = df_cliente['Scholastic Literacy Pro'].where(df_cliente['Scholastic Literacy Pro'] == 0, 1)
+            df_cliente['Livro de Inglês'] = df_cliente['Unique'].where(df_cliente['Unique'] == 0,1)
+
+            df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Ed. Infantil','INFANTIL')
+            df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Fund. Anos Iniciais','FUNDAMENTAL ANOS INICIAIS')
+            df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Fund. Anos Finais','FUNDAMENTAL ANOS FINAIS')
+            df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Ensino Médio','ENSINO MÉDIO')
+            df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('PV','PRÉ VESTIBULAR')
+            df_cliente=df_cliente.assign(Extra="")
+            
+            ###regra do AZ e Plataforma
+            df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
+            
+            ####regra do h5
+            df_cliente.loc[(df_cliente['H5 Plus'] == 1) & (df_cliente['H5 - 2 horas Journey'] == 1), ['H5 - 2 horas Journey','H5 - 3 Horas']] = 0
+            df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
+            
+            df_client = df_cliente.copy()
+            lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
+                
+            #df_client.to_excel('cliente.xlsx')
+            for item in lista:
+                df_client.loc[df_client[item] == 1.0, item] = item
+            COLUNAS = ['Série', 'Segmento','% Desconto Volume','% Desconto Extra','% Desconto Total','Quantidade de alunos','Razão Social','CNPJ','Bimestre','Squad','Tipo','Extra']
+            p = pd.DataFrame(columns=COLUNAS)
+            
+            for i in lista:
+                data = df_client[df_client[i] == i].groupby(['Série', 'Segmento','% Desconto Volume','% Desconto Extra','% Desconto Total','Quantidade de alunos','Razão Social','CNPJ','Squad','Tipo','Bimestre',i])['Extra'].count().reset_index()
+                data = data.rename(columns={i: 'Produto'})
+                p = pd.concat([p,data])
+            p = p.sort_values(by=['Série'])
+            p = p.reset_index()
+            p = p.drop(columns=['index'])
+            p = p.drop_duplicates()
+            p
+
+ 
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
