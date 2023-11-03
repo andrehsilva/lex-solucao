@@ -1009,6 +1009,7 @@ if check_password():
                 ###regra do AZ e Plataforma
                 df_cliente.loc[(df_cliente['Plataforma AZ'] == 1) & (df_cliente['Materiais Impressos AZ'] == 1), ['Plataforma AZ']] = 0
                 
+
                 ####regra do h5
                 df_cliente.loc[(df_cliente['H5 Plus'] == 1) & (df_cliente['H5 - 2 horas Journey'] == 1), ['H5 - 2 horas Journey','H5 - 3 Horas']] = 0
                 df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
@@ -1036,6 +1037,7 @@ if check_password():
                 p = p.drop_duplicates()
                 
                 
+                
                 itens = pd.read_excel(planilha, sheet_name=sheetname)
                 itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
                 itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
@@ -1061,6 +1063,7 @@ if check_password():
                 cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
                 pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
                 
+                
                 ####################################################################################################
                 ######NOVAS REGRAS POR SÉRIE#####################################################
                 
@@ -1072,7 +1075,10 @@ if check_password():
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MUNDO LEITOR','AZ')    
 
                     #if (pdt_serie['Marca'].str.contains('CONEXIA').any()):
-                      #      pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]                 
+                      #      pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]   
+                      # 
+                    if (pdt_serie['Marca'].str.contains('HIGH FIVE').any()):
+                            pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'HIGH FIVE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]              
                     
                     if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
                             pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
