@@ -416,9 +416,14 @@ if check_password():
             solucao['nome'] = solucao['nome'].str.replace('Extensivo','EXTENSIVO')
             solucao['nome'] = solucao['nome'].str.replace('Semi','SEMI')
 
+            solucao = solucao.rename(columns={'utilizacao_produto':'utilizacao_produto2','periodo_produto':'periodo_produto2'})
+            solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
+            solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
+            #solucao
+
             ope3bim = operacao.loc[operacao['Bimestre'] == '3º BIMESTRE']
             #ope3bim
-            sol3bim = solucao.loc[solucao['utilizacao_produto'] == '3º BIMESTRE']
+            sol3bim = solucao.loc[solucao['periodo_produto'] == '3º BIMESTRE']
             #sol3bim
             brinde3bim = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('3º BIMESTRE')]
             #brinde3bim
@@ -803,6 +808,12 @@ if check_password():
             solucao['sku'] = solucao['sku'].str.replace('SOLUÇÃO','SOLUCAO')
             operacao['SKU'] = operacao['SKU'].str.replace('SOLUÇÃO','SOLUCAO')
             #operacao
+
+            solucao = solucao.rename(columns={'utilizacao_produto':'utilizacao_produto2','periodo_produto':'periodo_produto2'})
+            solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
+            solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
+            #solucao
+
 
 
             ######## Exibir na tela para conferência #####
@@ -1196,12 +1207,18 @@ if check_password():
                 solucao['nome'] = solucao['nome'].str.replace('Extensivo','EXTENSIVO')
                 solucao['nome'] = solucao['nome'].str.replace('Semi','SEMI')
 
+                solucao = solucao.rename(columns={'utilizacao_produto':'utilizacao_produto2','periodo_produto':'periodo_produto2'})
+                solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
+                solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
+                #solucao
+
                 ope3bim = operacao.loc[operacao['Bimestre'] == '3º BIMESTRE']
                 #ope3bim
-                sol3bim = solucao.loc[solucao['utilizacao_produto'] == '3º BIMESTRE']
+                sol3bim = solucao.loc[solucao['periodo_produto'] == '3º BIMESTRE']
                 #sol3bim
                 brinde3bim = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('3º BIMESTRE')]
                 #brinde3bim
+
 
                 
                 #operacao
@@ -1567,13 +1584,19 @@ if check_password():
             solucao['serie_produto'] = solucao['serie_produto'].str.replace('Semi','SEMI EXTENSIVO II')
             solucao['nome'] = solucao['nome'].str.replace('Extensivo','EXTENSIVO')
             solucao['nome'] = solucao['nome'].str.replace('Semi','SEMI')
+
+            solucao = solucao.rename(columns={'utilizacao_produto':'utilizacao_produto2','periodo_produto':'periodo_produto2'})
+            solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
+            solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
+            #solucao
+
             ope3bim = operacao.loc[operacao['Bimestre'] == '3º BIMESTRE']
             #ope3bim
-            sol3bim = solucao.loc[solucao['utilizacao_produto'] == '3º BIMESTRE']
+            sol3bim = solucao.loc[solucao['periodo_produto'] == '3º BIMESTRE']
             #sol3bim
             brinde3bim = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('3º BIMESTRE')]
             #brinde3bim
-            
+
             #operacao
             st.divider()
             with st.spinner('Aguarde...'):
