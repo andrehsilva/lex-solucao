@@ -196,7 +196,7 @@ if check_password():
             df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
             
 
-            ####
+             ####
             df_client = df_cliente.copy()
             lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
             
@@ -242,7 +242,6 @@ if check_password():
             cod_nome = pd.read_excel(planilha, sheet_name='nome')
             cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
             pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
-            
             ####################################################################################################
             ######NOVAS REGRAS POR SÉRIE#####################################################
             
@@ -255,6 +254,7 @@ if check_password():
 
                 #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
                 #pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
+                
 
                 if (pdt_serie['Marca'].str.contains('AZ').any()):
                     pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('ANUAL')))]
@@ -264,12 +264,10 @@ if check_password():
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MY LIFE','AZ')
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('CONEXIA','AZ')
                     pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MUNDO LEITOR','AZ')
-                    
-                    
 
                 else:
                     pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
-                    pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('CONEXIA','HIGH FIVE')
+                    #pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('CONEXIA','HIGH FIVE')
                     #pdt_serie
                  
                 if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
@@ -290,6 +288,7 @@ if check_password():
 
             #pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
             pdt = pdt_full.copy()
+            
 
             ######End Regra   
         
@@ -419,7 +418,8 @@ if check_password():
             solucao = solucao.rename(columns={'utilizacao_produto':'utilizacao_produto2','periodo_produto':'periodo_produto2'})
             solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
             solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
-            #solucao
+            
+            solucao.loc[solucao['periodo_produto'].str.contains('ANUAL'), ['periodo_produto']] = '1º BIMESTRE'
 
             ope3bim = operacao.loc[operacao['Bimestre'] == '3º BIMESTRE']
             #ope3bim
@@ -811,8 +811,9 @@ if check_password():
 
             solucao = solucao.rename(columns={'utilizacao_produto':'utilizacao_produto2','periodo_produto':'periodo_produto2'})
             solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
+            #solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
             solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
-            #solucao
+            s
 
 
 
@@ -1035,7 +1036,6 @@ if check_password():
                 p = p.drop_duplicates()
                 
                 
-                
                 itens = pd.read_excel(planilha, sheet_name=sheetname)
                 itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
                 itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
@@ -1069,7 +1069,10 @@ if check_password():
                 pdt = pdt[~((pdt['Marca'] == 'CONEXIA') & (pdt['Bimestre'].str.contains('BIMESTRE')))]
                 for i in serie:
                     pdt_serie = pdt.loc[pdt['Série'] == i]
-                    pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MUNDO LEITOR','AZ')                     
+                    pdt_serie['Marca'] = pdt_serie['Marca'].str.replace('MUNDO LEITOR','AZ')    
+
+                    #if (pdt_serie['Marca'].str.contains('CONEXIA').any()):
+                      #      pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'CONEXIA') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]                 
                     
                     if (pdt_serie['Marca'].str.contains('MY LIFE').any()):
                             pdt_serie = pdt_serie[~((pdt_serie['Marca'] == 'MY LIFE') & (pdt_serie['Bimestre'].str.contains('BIMESTRE')))]
@@ -1079,8 +1082,10 @@ if check_password():
 
                 #pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
                 pdt = pdt_full.copy()
-                pdt.loc[pdt['Marca'] == 'MY LIFE', ['Marca']] = 'CONEXIA'
-                pdt.loc[pdt['Marca'] == 'HIGH FIVE', ['Marca']] = 'CONEXIA'
+                pdt.loc[pdt['Marca'] == 'MY LIFE', ['Marca']] = 'DIGITAL'
+                pdt.loc[pdt['Marca'] == 'CONEXIA', ['Marca']] = 'DIGITAL'
+
+                pdt.loc[(pdt['Marca'] == 'AZ')&(pdt['Bimestre'].str.contains('ANUAL')), ['Bimestre']] = '1º BIMESTRE'
 
                 ######End Regra   
             
