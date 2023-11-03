@@ -452,12 +452,12 @@ if check_password():
                 with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                     ope3bim.to_excel(writer, index=False, sheet_name='Sheet1')
                     # Configurar os parâmetros para o botão de download
-               # st.download_button(
-               #         label="Download do cadastro 3º Bimestre (XLSX)",
-               #     data=output.getvalue(),
-               #     file_name=f'{today}-{escola}-3bim.xlsx',
-               #     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-               # )
+                st.download_button(
+                        label="Download do cadastro 3º Bimestre (XLSX)",
+                    data=output.getvalue(),
+                    file_name=f'{today}-{escola}-3bim.xlsx',
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
                 
             with col2:
                 output = io.BytesIO()
@@ -477,14 +477,14 @@ if check_password():
                     file_name=f'{today}-{escola}-solucao_import.csv',
                     mime='text/csv'
                 )
-               # solucao 3bim
-               # sol3bim = convert_df(sol3bim)
-               # st.download_button(
-               # label="Download Solução 3º Bimestre (CSV)",
-               #     data=sol3bim,
-               #     file_name=f'{today}-{escola}-solucao_import_3bim.csv',
-               #     mime='text/csv'
-               # )
+                #solucao 3bim
+                sol3bim = convert_df(sol3bim)
+                st.download_button(
+                label="Download Solução 3º Bimestre (CSV)",
+                    data=sol3bim,
+                    file_name=f'{today}-{escola}-solucao_import_3bim.csv',
+                    mime='text/csv'
+                )
                     
             with col3:
                 df_brinde_final = convert_df(df_brinde_final)
@@ -504,21 +504,21 @@ if check_password():
                     file_name=f'{today}-{escola}-brinde.xlsx',
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
-                #df_brinde_h5 = convert_df(df_brinde_h5)
-                #st.download_button(
-                #label="Download do brinde H5 (CSV)",
-                #    data=df_brinde_h5,
-                #    file_name=f'{today}-{escola}-brinde_h5_import.csv',
-                #    mime='text/csv'
-                #)
+                df_brinde_h5 = convert_df(df_brinde_h5)
+                st.download_button(
+                label="Download do brinde H5 (CSV)",
+                    data=df_brinde_h5,
+                    file_name=f'{today}-{escola}-brinde_h5_import.csv',
+                    mime='text/csv'
+                )
                 #3BIMESTRE BRINDE
-                #brinde3bim = convert_df(brinde3bim)
-                #st.download_button(
-                #label="Download Brinde 3º Bimestre (CSV)",
-                #    data=brinde3bim,
-                #    file_name=f'{today}-{escola}-brinde_import_3bimes.csv',
-                #    mime='text/csv'
-                #)
+                brinde3bim = convert_df(brinde3bim)
+                st.download_button(
+                label="Download Brinde 3º Bimestre (CSV)",
+                    data=brinde3bim,
+                    file_name=f'{today}-{escola}-brinde_import_3bimes.csv',
+                    mime='text/csv'
+                )
                
 
             ###### DEBUG COM FILTRO
