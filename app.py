@@ -813,7 +813,7 @@ if check_password():
             solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
             #solucao = solucao.rename(columns={'utilizacao_produto2':'periodo_produto','periodo_produto2':'utilizacao_produto'})
             solucao = solucao[['grupo_de_atributo','nome','sku','visibilidade','ano_produto','faturamento_produto','marca_produto','publico_produto','serie_produto','utilizacao_produto','periodo_produto','cliente_produto','categorias','items','ativar_restricao','grupos_permissao']]
-            s
+            
 
 
 
