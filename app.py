@@ -672,7 +672,7 @@ if check_password():
             p = p.sort_values(by=['Série'])
             p = p.reset_index()
             p = p.drop(columns=['index'])
-            p
+            
             
             
             
@@ -684,7 +684,7 @@ if check_password():
           
 
             pdt = pd.merge(p, itens, on=['Série','Bimestre','Segmento','Produto'], how='inner')
-            pdt
+            
         
             cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
             pdt = pd.merge(pdt, cod_serial, on=['Série','Bimestre','Segmento','Público'], how='inner')
