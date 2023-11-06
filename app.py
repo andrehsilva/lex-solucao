@@ -672,21 +672,24 @@ if check_password():
             p = p.sort_values(by=['Série'])
             p = p.reset_index()
             p = p.drop(columns=['index'])
+            p
+            
             
             
             itens = pd.read_excel(planilha, sheet_name='itens_b2c')
             itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
             itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
             itens = itens[(itens['Marca'] == marca) | (itens['Marca'] == 'CONEXIA') | (itens['Marca'] == 'MUNDO LEITOR') | (itens['Marca'] == 'MY LIFE')| (itens['Marca'] == 'HIGH FIVE')]
-        
+            
           
 
             pdt = pd.merge(p, itens, on=['Série','Bimestre','Segmento','Produto'], how='inner')
-        
+            pdt
         
             cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
             pdt = pd.merge(pdt, cod_serial, on=['Série','Bimestre','Segmento','Público'], how='inner')
 
+            
 
             pdt['Ano'] = '2024'
             pdt['SKU'] = pdt['Ano'] + pdt['Serial']
@@ -817,7 +820,7 @@ if check_password():
             operacao['Nome'] = operacao['Nome'].str.replace('1º BIMESTRE','ANUAL')
             solucao['nome'] = solucao['nome'].str.replace('1º BIMESTRE','ANUAL')
 
-
+            solucao
 
             ######## Exibir na tela para conferência #####
             escola = operacao['Escola'].unique()[0]
