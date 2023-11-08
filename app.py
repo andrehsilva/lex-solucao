@@ -64,7 +64,7 @@ if check_password():
 
     #  'SEB','PREMIUM/UNIQUE',
     
-    page = ['CONEXIA B2B','CONEXIA B2C','SEB','PREMIUM-UNIQUE','EXCEL PARA CSV','CSV PARA EXCEL','PEDIDO PROGRAMADO']
+    page = ['CONEXIA B2B','CONEXIA B2C','SEB','UNIQUE','EXCEL PARA CSV','CSV PARA EXCEL','PEDIDO PROGRAMADO']
     choice = st.sidebar.selectbox('Selecione:',page)
 
 
@@ -1050,7 +1050,7 @@ if check_password():
                 
                 pdt = pd.merge(p, itens, on=['Série','Bimestre','Segmento','Produto'], how='inner')
                 
-                cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
+                cod_serial = pd.read_excel(planilha, sheet_name='cod_serial_seb')
                 
                 pdt = pd.merge(pdt, cod_serial, on=['Série','Bimestre','Segmento','Público'], how='inner')
 
@@ -1350,14 +1350,18 @@ if check_password():
 ##########################################################################################################################################################
 ##########################################################################################################################################################
 
-    if choice == 'PREMIUM-UNIQUE':
-        marca = 'AZ' ## ou AZ SESC B2B ou AZ/SESC
-        sheetname = 'itens_performance'
+    if choice == 'UNIQUE':
+        #marca = 'AZ' ## ou AZ SESC B2B ou AZ/SESC
+        sheetname = 'itens_unique'
         planilha = 'itens.xlsx'
         today = date.today().strftime('%d-%m-%Y')
         cliente_tipo = 'B2B'
 
         st.success("Simulador - SEB")
+        marca = st.radio("Selecione o grupo de escola",
+                         ["PREMIUM", "SPHERE"],
+        )
+        
         cliente = st.text_input('Digite o CNPJ da escola:')
         file = st.file_uploader("Selecione um arquivo Excel", type=["xlsm"])
 
@@ -1424,7 +1428,7 @@ if check_password():
             ####regra do h5
             df_cliente.loc[(df_cliente['H5 Plus'] == 1) & (df_cliente['H5 - 2 horas Journey'] == 1), ['H5 - 2 horas Journey','H5 - 3 Horas']] = 0
             df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
-            
+        
             df_client = df_cliente.copy()
             lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
                 
@@ -1443,12 +1447,14 @@ if check_password():
             p = p.drop(columns=['index'])
             p = p.drop_duplicates()
             
+            
             itens = pd.read_excel(planilha, sheet_name=sheetname)
             itens = itens[['MARCA',2024,'2024+','Produto','DESCRIÇÃO MAGENTO (B2C e B2B)','BIMESTRE','SEGMENTO','SÉRIE','PÚBLICO','TIPO DE FATURAMENTO']]
             itens = itens.rename(columns={'MARCA':'Marca','DESCRIÇÃO MAGENTO (B2C e B2B)':'Descrição Magento','BIMESTRE':'Bimestre','SEGMENTO':'Segmento','SÉRIE':'Série','PÚBLICO':'Público','TIPO DE FATURAMENTO':'Faturamento'})
-            itens = itens[(itens['Marca'] == marca) | (itens['Marca'] == 'CONEXIA') | (itens['Marca'] == 'MUNDO LEITOR') | (itens['Marca'] == 'MY LIFE')| (itens['Marca'] == 'HIGH FIVE')]
+            itens = itens[(itens['Marca'] == marca) | (itens['Marca'] == 'CONEXIA') |  (itens['Marca'] == 'MY LIFE')]
             
             pdt = pd.merge(p, itens, on=['Série','Bimestre','Segmento','Produto'], how='inner')
+            pdt
                 
             cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
             
