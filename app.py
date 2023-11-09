@@ -1361,6 +1361,7 @@ if check_password():
         marca = st.radio("Selecione o grupo de escola",
                          ["PREMIUM", "SPHERE"],
         )
+        marca
         
         cliente = st.text_input('Digite o CNPJ da escola:')
         file = st.file_uploader("Selecione um arquivo Excel", type=["xlsm"])
@@ -1413,7 +1414,7 @@ if check_password():
             df_cliente['Tindin'] = df_cliente['Tindin'].where(df_cliente['Tindin'] == 0, 1)
             df_cliente['Scholastic Earlybird and Bookflix'] = df_cliente['Scholastic Earlybird and Bookflix'].where(df_cliente['Scholastic Earlybird and Bookflix'] == 0, 1)
             df_cliente['Scholastic Literacy Pro'] = df_cliente['Scholastic Literacy Pro'].where(df_cliente['Scholastic Literacy Pro'] == 0, 1)
-            df_cliente['Livro de Inglês'] = df_cliente['Unique'].where(df_cliente['Unique'] == 0,1)
+            df_cliente['Unique'] = df_cliente['Unique'].where(df_cliente['Unique'] == 0,1)
 
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Ed. Infantil','INFANTIL')
             df_cliente['Segmento'] = df_cliente['Segmento'].str.replace('Fund. Anos Iniciais','FUNDAMENTAL ANOS INICIAIS')
@@ -1430,7 +1431,7 @@ if check_password():
             df_cliente.loc[(df_cliente['H5 - 2 horas Journey'] == 1) & (df_cliente['H5 - 3 Horas'] == 1), ['H5 - 3 Horas']] = 0
         
             df_client = df_cliente.copy()
-            lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Livro de Inglês']
+            lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Unique']
                 
             #df_client.to_excel('cliente.xlsx')
             for item in lista:
@@ -1454,9 +1455,9 @@ if check_password():
             itens = itens[(itens['Marca'] == marca) | (itens['Marca'] == 'CONEXIA') |  (itens['Marca'] == 'MY LIFE')]
             
             pdt = pd.merge(p, itens, on=['Série','Bimestre','Segmento','Produto'], how='inner')
-            pdt
+            
                 
-            cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
+            cod_serial = pd.read_excel(planilha, sheet_name='cod_serial_seb')
             
             pdt = pd.merge(pdt, cod_serial, on=['Série','Bimestre','Segmento','Público'], how='inner')
             pdt['Ano'] = '2024'
