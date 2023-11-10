@@ -1489,8 +1489,11 @@ if check_password():
                 pdt_full = pd.concat(pdt_final)
             #pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
             pdt = pdt_full.copy()
-            pdt.loc[pdt['Marca'] == 'MY LIFE', ['Marca']] = 'CONEXIA'
-            pdt.loc[pdt['Marca'] == 'HIGH FIVE', ['Marca']] = 'CONEXIA'
+            pdt
+            if (pdt['Marca'].str.contains('PREMIUM').any()):
+                pdt.loc[pdt['Marca'] == 'CONEXIA', ['Marca']] = 'PREMIUM'
+            else:
+                pdt.loc[pdt['Marca'] == 'CONEXIA', ['Marca']] = 'SPHERE'
             ######End Regra   
         
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
@@ -1622,6 +1625,10 @@ if check_password():
             #sol3bim
             brinde3bim = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('3º BIMESTRE')]
             #brinde3bim
+
+            solucao['categorias'] = solucao['categorias'].str.replace('°','º')
+            solucao['categorias'] = solucao['categorias'].str.replace('SPHERE','PREMIUM')
+            solucao['categorias'] = solucao['categorias'].str.replace('UNIQUE','PREMIUM')
 
             #operacao
             st.divider()
