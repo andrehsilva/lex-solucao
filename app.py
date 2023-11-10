@@ -1489,7 +1489,7 @@ if check_password():
                 pdt_full = pd.concat(pdt_final)
             #pdt_full = pdt_full[~((pdt_full['Marca'] == 'AZ') & (pdt_full['Bimestre'].str.contains('ANUAL')))]
             pdt = pdt_full.copy()
-            pdt
+            
             if (pdt['Marca'].str.contains('PREMIUM').any()):
                 pdt.loc[pdt['Marca'] == 'CONEXIA', ['Marca']] = 'PREMIUM'
             else:
