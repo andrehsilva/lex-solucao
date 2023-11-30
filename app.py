@@ -112,6 +112,7 @@ if check_password():
             #alterar regra conforme leitura das planilhas
             simul = pd.concat([simul0,simul1,simul2,simul3,simul4])
             
+            
             #simul = pd.concat([simul1,simul2,simul3,simul4])
             simul = simul[simul['Quantidade de alunos']>0]
             #simul
@@ -143,6 +144,7 @@ if check_password():
             simulador = simul.copy()
             df_cliente = simulador.loc[simulador['CNPJ'].str.strip() == cliente]
             df_cliente = df_cliente.fillna(0)
+            
 
             df_cliente['Plataforma AZ'] = df_cliente['Plataforma AZ'].where(df_cliente['Plataforma AZ'] == 0, 1)
             df_cliente['Materiais Impressos AZ'] = df_cliente['Materiais Impressos AZ'].where(df_cliente['Materiais Impressos AZ'] == 0, 1)
