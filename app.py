@@ -230,6 +230,7 @@ if check_password():
             cod_serial = pd.read_excel(planilha, sheet_name='cod_serial')
             
             pdt = pd.merge(pdt, cod_serial, on=['Série','Bimestre','Segmento','Público'], how='inner')
+            
 
             pdt['Ano'] = '2024'
             pdt['SKU'] = pdt['Ano'] + pdt['Serial']
