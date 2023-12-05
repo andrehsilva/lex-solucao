@@ -1435,7 +1435,7 @@ if check_password():
         
             df_client = df_cliente.copy()
             lista = ['Plataforma AZ','Materiais Impressos AZ','Alfabetização','Cantalelê','Mundo Leitor','4 Avaliações Nacionais','1 Simulado ENEM','5 Simulados ENEM','1 Simulado Regional','Itinerários','H5 - 3 Horas','H5 - 2 horas Journey','H5 Plus','My Life - Base','My Life - 2024','Binoculo - Base','Educacross Infantil - Base','Educacross - Base','Educacross AZ - Base','Educacross H5 - Base','Ubbu - Base','Binoculo - 2024','Educacross Infantil - 2024','Educacross - 2024','Educacross AZ - 2024','Educacross H5 - 2024','Ubbu - 2024','Árvore 1 Módulo','Árvore 2 Módulos','Árvore 3 Módulos','School Guardian','Tindin','Scholastic Earlybird and Bookflix','Scholastic Literacy Pro','Unique']
-                
+               
             #df_client.to_excel('cliente.xlsx')
             for item in lista:
                 df_client.loc[df_client[item] == 1.0, item] = item
@@ -1498,12 +1498,24 @@ if check_password():
             else:
                 pdt.loc[pdt['Marca'] == 'CONEXIA', ['Marca']] = 'SPHERE'
             ######End Regra   
-        
+            
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
             pdt['SKU'] = pdt['Escola'] + '2024' + pdt['Marca'] + pdt['Serial']
             pdt['SKU'] = pdt['SKU'].str.replace(' ','')
             pdt = pdt.drop_duplicates()
-            
+
+
+            ####REGRA DO 1º e 2º SEMESTRE QUE NÂO TEM NA PLANILHA FORMULÁRIO
+            pdt.loc[pdt['Descrição Magento'].str.contains('1º SEMESTRE'), ['Nome']] = pdt['Nome'].str.replace('ANUAL','1º SEMESTRE')
+            pdt.loc[pdt['Descrição Magento'].str.contains('2º SEMESTRE'), ['Nome']] = pdt['Nome'].str.replace('ANUAL','2º SEMESTRE')
+
+
+
+            pdt.loc[pdt['Nome'].str.contains('1º SEMESTRE'), ['Bimestre']] = '1º BIMESTRE'
+            pdt.loc[pdt['Nome'].str.contains('2º SEMESTRE'), ['Bimestre']] = '3º BIMESTRE'
+                        
+
+
             operacoes = pdt[['Escola','CNPJ','Ano','Marca','Serial','Segmento','Série','Bimestre','Público','SKU','Nome',2024,'2024+','Descrição Magento','Quantidade de alunos','% Desconto Volume','% Desconto Extra','% Desconto Total','Customer Group','Squad']]
             operacoes = operacoes.rename(columns = {2024:'Cód Itens'} )
             solucao = operacoes.copy()
