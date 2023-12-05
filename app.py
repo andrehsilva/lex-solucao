@@ -1500,21 +1500,30 @@ if check_password():
             ######End Regra   
             
             pdt['Nome'] = 'SOLUÇÃO ' + pdt['Marca']  + ' - ' + pdt['Escola'] + ' - ' + pdt['Segmento'] + ' - ' + pdt['Série'] + ' - ' + pdt['Bimestre']
+
+            
             pdt['SKU'] = pdt['Escola'] + '2024' + pdt['Marca'] + pdt['Serial']
             pdt['SKU'] = pdt['SKU'].str.replace(' ','')
             pdt = pdt.drop_duplicates()
+            pdt
 
 
             ####REGRA DO 1º e 2º SEMESTRE QUE NÂO TEM NA PLANILHA FORMULÁRIO
-            pdt.loc[pdt['Descrição Magento'].str.contains('1º SEMESTRE'), ['Nome']] = pdt['Nome'].str.replace('ANUAL','1º SEMESTRE')
-            pdt.loc[pdt['Descrição Magento'].str.contains('2º SEMESTRE'), ['Nome']] = pdt['Nome'].str.replace('ANUAL','2º SEMESTRE')
+            pdt.loc[pdt['Descrição Magento'].str.contains('1º SEMESTRE'), ['Nome']] = pdt['Nome'].str.replace('ANUAL','1º BIMESTRE')
+            pdt.loc[pdt['Descrição Magento'].str.contains('2º SEMESTRE'), ['Nome']] = pdt['Nome'].str.replace('ANUAL','3º BIMESTRE')
 
 
 
-            pdt.loc[pdt['Nome'].str.contains('1º SEMESTRE'), ['Bimestre']] = '1º BIMESTRE'
-            pdt.loc[pdt['Nome'].str.contains('2º SEMESTRE'), ['Bimestre']] = '3º BIMESTRE'
+            pdt.loc[pdt['Nome'].str.contains('1º BIMESTRE'), ['Bimestre']] = '1º BIMESTRE'
+            pdt.loc[pdt['Nome'].str.contains('3º BIMESTRE'), ['Bimestre']] = '3º BIMESTRE'
+
+            pdt.loc[pdt['Bimestre'].str.contains('1º BIMESTRE'), ['SKU']] = pdt['SKU'][:-1] + '1B'
+            pdt.loc[pdt['Bimestre'].str.contains('3º BIMESTRE'), ['SKU']] = pdt['SKU'][:-1] + '3B'
+
+            pdt.loc[pdt['Bimestre'].str.contains('1º BIMESTRE'), ['Serial']] = pdt['Serial'][:-1] + '1B'
+            pdt.loc[pdt['Bimestre'].str.contains('3º BIMESTRE'), ['Serial']] = pdt['Serial'][:-1] + '3B'
                         
-
+            pdt
 
             operacoes = pdt[['Escola','CNPJ','Ano','Marca','Serial','Segmento','Série','Bimestre','Público','SKU','Nome',2024,'2024+','Descrição Magento','Quantidade de alunos','% Desconto Volume','% Desconto Extra','% Desconto Total','Customer Group','Squad']]
             operacoes = operacoes.rename(columns = {2024:'Cód Itens'} )
