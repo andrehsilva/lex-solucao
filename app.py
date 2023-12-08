@@ -64,7 +64,7 @@ if check_password():
 
     #  'SEB','PREMIUM/UNIQUE',
     
-    page = ['CONEXIA B2B','CONEXIA B2C','SEB','UNIQUE','PREMIUM','EXCEL PARA CSV','CSV PARA EXCEL','PEDIDO PROGRAMADO']
+    page = ['CONEXIA B2B','CONEXIA B2C','SEB','UNIQUE','PREMIUM DIGITAL','EXCEL PARA CSV','CSV PARA EXCEL','PEDIDO PROGRAMADO']
     choice = st.sidebar.selectbox('Selecione:',page)
 
 
@@ -1761,14 +1761,14 @@ if check_password():
                 ##################
 
 
-    if choice == 'PREMIUM':
+    if choice == 'PREMIUM DIGITAL':
         #marca = 'AZ' ## ou AZ SESC B2B ou AZ/SESC
         sheetname = 'itens_digital'
         planilha = 'itens.xlsx'
         today = date.today().strftime('%d-%m-%Y')
         cliente_tipo = 'B2B'
 
-        st.success("Simulador - PREMIUM")
+        st.success("Simulador - PREMIUM DIGITAL")
        
         
         
