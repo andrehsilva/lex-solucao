@@ -430,6 +430,14 @@ if check_password():
             brinde3bim = df_brinde_final.loc[df_brinde_final['nome_da_regra'].str.contains('3º BIMESTRE')]
             #brinde3bim
 
+            operacao.to_csv(f'{escola}-operacao.csv')
+            operacao.to_excel(f'{escola}-operacao.xlsx')
+
+            solucao.to_csv(f'{escola}-solucao.csv')
+            solucao.to_excel(f'{escola}-solucao.xlsx')
+
+            df_brinde_final2.to_csv(f'{escola}-brinde.csv')
+            df_brinde_final2.to_excel(f'{escola}-brinde.xlsx')
             
             #operacao
             st.divider()
