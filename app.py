@@ -82,8 +82,17 @@ if check_password():
         st.info("Simulador - CONEXIA B2B")
         agree = st.checkbox('Marque para usar o cálculo do script - (Não recomendado!)')
         #  29.271.264/0001-61
-        cliente = st.text_input('Digite o CNPJ da escola:')
+        cliente = st.text_input('Digite o CNPJ da escola:', placeholder='Exemplo: 10.100.100/0001-10')
         # Carrega o arquivo
+
+        ##########################
+        grupo_escola = st.text_input('Digite o grupo da escola cadastrado no Magento:', placeholder='Exemplo: 0001-10_NOME_ESCOLA')
+        # Carrega o arquivo
+
+        nomedaescola = st.text_input('Digite o nome da escola para a solução:', placeholder='Exemplo: ESCOLA CONEXIA') 
+
+        #######################
+
         file = st.file_uploader("Selecione um arquivo Excel", type=["xlsm"])
         
         
@@ -240,10 +249,16 @@ if check_password():
             pdt['CNPJ_off'] = [h.sub('', x) for x in pdt['CNPJ']]
             pdt['CNPJ_off'] = [x.lstrip('0') for x in pdt['CNPJ_off']]
             pdt['CNPJ_off'] = pdt['CNPJ_off'].astype(float)
+
+            ####
+            pdt['Escola'] = nomedaescola
+            pdt['Customer Group'] = grupo_escola
+            #pdt
             
-            cod_nome = pd.read_excel(planilha, sheet_name='nome')
-            cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
-            pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
+            #cod_nome = pd.read_excel(planilha, sheet_name='nome')
+            #cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
+            #pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
+            #pdt
             ####################################################################################################
             ######NOVAS REGRAS POR SÉRIE#####################################################
             
@@ -564,8 +579,22 @@ if check_password():
         st.warning("Simulador - CONEXIA B2C")
         #agree = st.checkbox('Marque para usar o cálculo do script')
         #  29.271.264/0001-61
-        cliente = st.text_input('Digite o CNPJ da escola:')
+        cliente = st.text_input('Digite o CNPJ da escola:', placeholder='Exemplo: 10.100.100/0001-10')
         # Carrega o arquivo
+
+
+
+        ##########################
+        grupo_escola = st.text_input('Digite o grupo da escola cadastrado no Magento:', placeholder='Exemplo: 0001-10_NOME_ESCOLA')
+        # Carrega o arquivo
+
+        nomedaescola = st.text_input('Digite o nome da escola para a solução:', placeholder='Exemplo: ESCOLA CONEXIA') 
+
+        #######################
+
+
+
+
         file = st.file_uploader("Selecione um arquivo Excel", type=["xlsm"])
         
         if file is not None:
@@ -710,10 +739,16 @@ if check_password():
             pdt['CNPJ_off'] = [h.sub('', x) for x in pdt['CNPJ']]
             pdt['CNPJ_off'] = [x.lstrip('0') for x in pdt['CNPJ_off']]
             pdt['CNPJ_off'] = pdt['CNPJ_off'].astype(float)
+
+
+             ####
+            pdt['Escola'] = nomedaescola
+            pdt['Customer Group'] = grupo_escola
+            pdt
             
-            cod_nome = pd.read_excel(planilha, sheet_name='nome_b2c')
-            cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
-            pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
+            #cod_nome = pd.read_excel(planilha, sheet_name='nome_b2c')
+            #cod_nome['CNPJ_off'] = cod_nome['CNPJ_off'].astype(float)
+            #pdt = pd.merge(pdt, cod_nome, on=['CNPJ_off'], how='inner')
             
             ####################################################################################################
             ######NOVAS REGRAS DA SOLUÇÃO #####################################################
